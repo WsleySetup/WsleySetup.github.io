@@ -11,6 +11,9 @@
       position: relative;
       height: 100vh;
       background: linear-gradient(180deg, #2a7b9b 0%, #57c785 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      user-select: none;
     }
     #bounceImage {
       position: absolute;
@@ -43,10 +46,23 @@
       background: #e91e63;
       box-shadow: 0 0 10px #e91e63;
     }
+    #timer {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 48px;
+      font-weight: bold;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+      pointer-events: none;
+      user-select: none;
+      z-index: 1000;
+    }
   </style>
 </head>
 <body>
   <img id="bounceImage" src="images/wes.png" alt="wes" />
+  <div id="timer">00:00</div>
 
   <script>
     // Disable right click & certain keys (F12, Ctrl+Shift+I/J, Ctrl+U)
@@ -62,6 +78,7 @@
     };
 
     const img = document.getElementById('bounceImage');
+    const timerEl = document.getElementById('timer');
     let posX = 0;
     let posY = 0;
     let speedX = 6;
@@ -77,7 +94,7 @@
 
     bounceSound.volume = 1;
     cornerSound.volume = 1;
-    powerupSound.volume = 0.1;
+    powerupSound.volume = 1;
 
     // Power-ups array
     const powerUps = [];
@@ -93,7 +110,6 @@
         img.style.width = newWidth + 'px';
         img.style.height = newHeight + 'px';
       } else if (type === 'colorchange') {
-        // Random hue rotation for color change
         const hue = Math.floor(Math.random() * 360);
         img.style.filter = `hue-rotate(${hue}deg)`;
       }
@@ -101,9 +117,8 @@
 
     // Spawn power-up randomly on screen, but with a delay between spawns
     function spawnPowerUp() {
-      if (powerUps.length >= 9999) {
-        // Only allow one powerup at a time
-        return;
+      if (powerUps.length >= 1) {
+        return; // Only 1 power-up at a time
       }
 
       const types = ['speedup', 'sizechange', 'colorchange'];
@@ -112,7 +127,6 @@
       const powerupEl = document.createElement('div');
       powerupEl.classList.add('powerup', chosenType);
 
-      // Random position inside window bounds (consider power-up size)
       const padding = 50;
       const x = Math.random() * (window.innerWidth - padding * 2) + padding;
       const y = Math.random() * (window.innerHeight - padding * 2) + padding;
@@ -121,7 +135,6 @@
       powerupEl.style.top = y + 'px';
 
       document.body.appendChild(powerupEl);
-
       powerUps.push({ el: powerupEl, name: chosenType });
     }
 
@@ -133,6 +146,19 @@
              ay + ah > by;
     }
 
+    // Timer variables
+    let startTime = Date.now();
+
+    function updateTimer() {
+      let elapsed = Math.floor((Date.now() - startTime) / 1000);
+      let minutes = Math.floor(elapsed / 60);
+      let seconds = elapsed % 60;
+
+      timerEl.textContent =
+        (minutes < 10 ? '0' : '') + minutes + ':' +
+        (seconds < 10 ? '0' : '') + seconds;
+    }
+
     // Main animation loop
     function update() {
       posX += speedX;
@@ -141,7 +167,6 @@
       let hitX = false;
       let hitY = false;
 
-      // Bounce off edges
       if (posX + imgWidth > window.innerWidth) {
         posX = window.innerWidth - imgWidth;
         speedX = -speedX;
@@ -192,13 +217,14 @@
         }
       }
 
+      updateTimer();
       requestAnimationFrame(update);
     }
 
     // Spawn power-ups every 7 seconds
     setInterval(spawnPowerUp, 5000);
 
-    // Start
+    // Start everything
     update();
   </script>
 </body>
