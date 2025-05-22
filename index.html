@@ -8,7 +8,7 @@
   <style>
     body {
       margin: 0;
-      overflow: hidden; /* prevent scrollbars */
+      overflow: hidden;
       position: relative;
       height: 100vh;
       background: linear-gradient(180deg, #2a7b9b 0%, #57c785 100%);
@@ -16,11 +16,11 @@
       color: white;
       user-select: none;
     }
-    #bounceImage {
+    .bounceImage {
       position: absolute;
       width: 100px;
       height: 100px;
-      user-select: none; /* prevent drag highlight */
+      user-select: none;
       left: 0;
       top: 0;
       filter: hue-rotate(0deg);
@@ -35,18 +35,11 @@
       pointer-events: none;
       opacity: 0.9;
     }
-    .speedup {
-      background: #ff5722;
-      box-shadow: 0 0 10px #ff5722;
-    }
-    .sizechange {
-      background: #2196f3;
-      box-shadow: 0 0 10px #2196f3;
-    }
-    .colorchange {
-      background: #e91e63;
-      box-shadow: 0 0 10px #e91e63;
-    }
+    .speedup { background: #ff5722; box-shadow: 0 0 10px #ff5722; }
+    .sizechange { background: #2196f3; box-shadow: 0 0 10px #2196f3; }
+    .colorchange { background: #e91e63; box-shadow: 0 0 10px #e91e63; }
+    .duplicate { background: #ffc107; box-shadow: 0 0 10px #ffc107; }
+
     #timer {
       position: fixed;
       top: 50%;
@@ -62,67 +55,67 @@
   </style>
 </head>
 <body>
-  <img id="bounceImage" src="images/tropical.jpg" alt="wes" />
+  
   <div id="timer">00:00</div>
 
   <script>
-    // Disable right click & certain keys (F12, Ctrl+Shift+I/J, Ctrl+U)
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.onkeydown = function(e) {
       if (
-        e.keyCode === 123 || // F12
-        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I/J
-        (e.ctrlKey && e.keyCode === 85) // Ctrl+U
+        e.keyCode === 123 ||
+        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
+        (e.ctrlKey && e.keyCode === 85)
       ) {
         return false;
       }
     };
 
-    const img = document.getElementById('bounceImage');
     const timerEl = document.getElementById('timer');
-    let posX = 0;
-    let posY = 0;
-    let speedX = 6;
-    let speedY = 4;
-
     const imgWidth = 100;
     const imgHeight = 100;
 
-    // Sounds
     const bounceSound = new Audio('sounds/boing.mp3');
     const cornerSound = new Audio('sounds/corner.mp3');
     const powerupSound = new Audio('sounds/powerup.mp3');
-
     bounceSound.volume = 1;
     cornerSound.volume = 1;
     powerupSound.volume = 0.1;
 
-    // Power-ups array
     const powerUps = [];
+    const images = [];
 
-    // Apply power-up effect
-    function applyPowerUp(type) {
+    function createBouncingImage(x = 0, y = 0, speedX = 6, speedY = 4) {
+      const img = document.createElement('img');
+      img.src = 'images/wes.png';
+      img.classList.add('bounceImage');
+      document.body.appendChild(img);
+
+      return { el: img, x, y, speedX, speedY, width: imgWidth, height: imgHeight };
+    }
+
+    function applyPowerUp(type, image) {
       if (type === 'speedup') {
-        speedX *= 1.5;
-        speedY *= 1.5;
+        image.speedX *= 1.5;
+        image.speedY *= 1.5;
       } else if (type === 'sizechange') {
-        let newWidth = imgWidth * (Math.random() > 0.5 ? 1.5 : 0.7);
-        let newHeight = imgHeight * (Math.random() > 0.5 ? 1.5 : 0.7);
-        img.style.width = newWidth + 'px';
-        img.style.height = newHeight + 'px';
+        const scale = Math.random() > 0.5 ? 1.5 : 0.7;
+        image.width = imgWidth * scale;
+        image.height = imgHeight * scale;
+        image.el.style.width = image.width + 'px';
+        image.el.style.height = image.height + 'px';
       } else if (type === 'colorchange') {
         const hue = Math.floor(Math.random() * 360);
-        img.style.filter = `hue-rotate(${hue}deg)`;
+        image.el.style.filter = `hue-rotate(${hue}deg)`;
+      } else if (type === 'duplicate') {
+        const clone = createBouncingImage(image.x, image.y, -image.speedX, -image.speedY);
+        images.push(clone);
       }
     }
 
-    // Spawn power-up randomly on screen, but with a delay between spawns
     function spawnPowerUp() {
-      if (powerUps.length >= 9999) {
-        return; // Only 1 power-up at a time
-      }
+      if (powerUps.length >= 5) return;
 
-      const types = ['speedup', 'sizechange', 'colorchange'];
+      const types = ['speedup', 'sizechange', 'colorchange', 'duplicate'];
       const chosenType = types[Math.floor(Math.random() * types.length)];
 
       const powerupEl = document.createElement('div');
@@ -139,82 +132,76 @@
       powerUps.push({ el: powerupEl, name: chosenType });
     }
 
-    // Collision detection helper
     function isColliding(ax, ay, aw, ah, bx, by, bw, bh) {
-      return ax < bx + bw &&
-             ax + aw > bx &&
-             ay < by + bh &&
-             ay + ah > by;
+      return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
     }
 
-    // Timer variables
     let startTime = Date.now();
-
     function updateTimer() {
-      let elapsed = Math.floor((Date.now() - startTime) / 1000);
-      let minutes = Math.floor(elapsed / 60);
-      let seconds = elapsed % 60;
-
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const minutes = Math.floor(elapsed / 60);
+      const seconds = elapsed % 60;
       timerEl.textContent =
         (minutes < 10 ? '0' : '') + minutes + ':' +
         (seconds < 10 ? '0' : '') + seconds;
     }
 
-    // Main animation loop
     function update() {
-      posX += speedX;
-      posY += speedY;
+      for (let img of images) {
+        img.x += img.speedX;
+        img.y += img.speedY;
 
-      let hitX = false;
-      let hitY = false;
+        let hitX = false;
+        let hitY = false;
 
-      if (posX + imgWidth > window.innerWidth) {
-        posX = window.innerWidth - imgWidth;
-        speedX = -speedX;
-        hitX = true;
-      }
-      if (posX < 0) {
-        posX = 0;
-        speedX = -speedX;
-        hitX = true;
-      }
-      if (posY + imgHeight > window.innerHeight) {
-        posY = window.innerHeight - imgHeight;
-        speedY = -speedY;
-        hitY = true;
-      }
-      if (posY < 0) {
-        posY = 0;
-        speedY = -speedY;
-        hitY = true;
-      }
+        if (img.x + img.width > window.innerWidth) {
+          img.x = window.innerWidth - img.width;
+          img.speedX = -img.speedX;
+          hitX = true;
+        }
+        if (img.x < 0) {
+          img.x = 0;
+          img.speedX = -img.speedX;
+          hitX = true;
+        }
+        if (img.y + img.height > window.innerHeight) {
+          img.y = window.innerHeight - img.height;
+          img.speedY = -img.speedY;
+          hitY = true;
+        }
+        if (img.y < 0) {
+          img.y = 0;
+          img.speedY = -img.speedY;
+          hitY = true;
+        }
 
-      if (hitX && hitY) {
-        cornerSound.currentTime = 0;
-        cornerSound.play();
-      } else if (hitX || hitY) {
-        bounceSound.currentTime = 0;
-        bounceSound.play();
-      }
+        if (hitX && hitY) {
+          cornerSound.currentTime = 0;
+          cornerSound.play();
+        } else if (hitX || hitY) {
+          bounceSound.currentTime = 0;
+          bounceSound.play();
+        }
 
-      img.style.left = posX + 'px';
-      img.style.top = posY + 'px';
+        img.el.style.left = img.x + 'px';
+        img.el.style.top = img.y + 'px';
 
-      // Check collision with power-ups
-      for (let i = powerUps.length - 1; i >= 0; i--) {
-        const p = powerUps[i];
-        const rectPowerUp = p.el.getBoundingClientRect();
-        const rectDog = img.getBoundingClientRect();
+        // Power-up collision
+        for (let i = powerUps.length - 1; i >= 0; i--) {
+          const p = powerUps[i];
+          const rectP = p.el.getBoundingClientRect();
+          const rectI = img.el.getBoundingClientRect();
 
-        if (isColliding(
-          rectDog.left, rectDog.top, rectDog.width, rectDog.height,
-          rectPowerUp.left, rectPowerUp.top, rectPowerUp.width, rectPowerUp.height
-        )) {
-          applyPowerUp(p.name);
-          powerupSound.currentTime = 0;
-          powerupSound.play();
-          document.body.removeChild(p.el);
-          powerUps.splice(i, 1);
+          if (isColliding(
+            rectI.left, rectI.top, rectI.width, rectI.height,
+            rectP.left, rectP.top, rectP.width, rectP.height
+          )) {
+            applyPowerUp(p.name, img);
+            powerupSound.currentTime = 0;
+            powerupSound.play();
+            document.body.removeChild(p.el);
+            powerUps.splice(i, 1);
+          }
         }
       }
 
@@ -222,10 +209,8 @@
       requestAnimationFrame(update);
     }
 
-    // Spawn power-ups every 7 seconds
+    images.push(createBouncingImage());
     setInterval(spawnPowerUp, 5000);
-
-    // Start everything
     update();
   </script>
 </body>
