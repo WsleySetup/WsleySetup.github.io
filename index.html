@@ -1,91 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>MelonDog</title>
-    
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            background: linear-gradient(180deg, #2A7B9B 0%, #57C785 100%);
+        }
+        #bounceImage {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            user-select: none;
+            transition: filter 0.3s;
+        }
+        .powerUp {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        #colorPowerUp {
+            width: 40px;
+            height: 40px;
+            background: yellow;
+        }
+        #sizePowerUp {
+            width: 40px;
+            height: 40px;
+            background: orange;
+        }
+        #speedPowerUp {
+            width: 40px;
+            height: 40px;
+            background: purple;
+        }
+    </style>
 </head>
-<img id="bounceImage" src="images/wes.png" alt="wes">
 <body>
-   
-</body>
+    <img id="bounceImage" src="images/wes.png" alt="wes" />
+    <div id="colorPowerUp" class="powerUp"></div>
+    <div id="sizePowerUp" class="powerUp"></div>
+    <div id="speedPowerUp" class="powerUp"></div>
+
     <script>
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  document.onkeydown = function(e) {
-    if (e.keyCode === 123 || // F12
-        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I/J
-        (e.ctrlKey && e.keyCode === 85)) { // Ctrl+U
-      return false;
-    }
-  };
-   const img = document.getElementById('bounceImage');
-let posX = 0;
-let posY = 0;
-let speedX = 6;
-let speedY = 4;
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.onkeydown = function(e) {
+            if (
+                e.keyCode === 123 || // F12
+                (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I/J
+                (e.ctrlKey && e.keyCode === 85) // Ctrl+U
+            ) {
+                return false;
+            }
+        };
 
-const imgWidth = 100;
-const imgHeight = 100;
+        const img = document.getElementById('bounceImage');
+        const colorPU = document.getElementById('colorPowerUp');
+        const sizePU = document.getElementById('sizePowerUp');
+        const speedPU = document.getElementById('speedPowerUp');
 
-const bounceSound = new Audio('sounds/boing.mp3');
-const cornerSound = new Audio('sounds/corner.mp3');
+        let posX = 0;
+        let posY = 0;
+        let speedX = 6;
+        let speedY = 4;
 
-bounceSound.volume = 1;
-cornerSound.volume = 1;
+        const baseSpeedX = speedX;
+        const baseSpeedY = speedY;
 
-function update() {
-  posX += speedX;
-  posY += speedY;
+        let imgWidth = 100;
+        let imgHeight = 100;
 
-  let hitX = false;
-  let hitY = false;
+        // Place power-ups randomly inside viewport
+        function placePowerUp(el) {
+            el.style.left = Math.random() * (window.innerWidth - 40) + 'px';
+            el.style.top = Math.random() * (window.innerHeight - 40) + 'px';
+        }
+        placePowerUp(colorPU);
+        placePowerUp(sizePU);
+        placePowerUp(speedPU);
 
-  // Check X boundaries
-  if (posX + imgWidth > window.innerWidth || posX < 0) {
-    speedX = -speedX;
-    hitX = true;
-  }
+        // Sounds
+        const bounceSound = new Audio('sounds/boing.mp3');
+        const cornerSound = new Audio('sounds/corner.mp3');
 
-  // Check Y boundaries
-  if (posY + imgHeight > window.innerHeight || posY < 0) {
-    speedY = -speedY;
-    hitY = true;
-  }
+        bounceSound.volume = 1;
+        cornerSound.volume = 1;
 
-  // Play appropriate sound
-  if (hitX && hitY) {
-    cornerSound.currentTime = 0;
-    cornerSound.play();
-  } else if (hitX || hitY) {
-    bounceSound.currentTime = 0;
-    bounceSound.play();
-  }
+        // Helpers
+        function intersects(x1, y1, w1, h1, x2, y2, w2, h2) {
+            return !(x2 > x1 + w1 || 
+                     x2 + w2 < x1 || 
+                     y2 > y1 + h1 || 
+                     y2 + h2 < y1);
+        }
 
-  img.style.left = posX + 'px';
-  img.style.top = posY + 'px';
+        // Power-up effect timers
+        let colorTimeout, sizeTimeout, speedTimeout;
 
-  setTimeout(update, 1); // roughly 60fps
+        function update() {
+            posX += speedX;
+            posY += speedY;
 
-}
+            let hitX = false;
+            let hitY = false;
 
-update();
+            // Bounce on window edges
+            if (posX + imgWidth > window.innerWidth || posX < 0) {
+                speedX = -speedX;
+                hitX = true;
+            }
+            if (posY + imgHeight > window.innerHeight || posY < 0) {
+                speedY = -speedY;
+                hitY = true;
+            }
 
-</script>
-<style>
-    body {
-      margin: 0;
-      overflow: hidden; /* prevent scrollbars */
-      position: relative;
-      height: 100vh;
-      background: linear-gradient(180deg, #2A7B9B 0%, #57C785 100%);
-    }
-    #bounceImage {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      user-select: none; /* prevent drag highlight */
-    }
-</style>
+            // Play sounds
+            if (hitX && hitY) {
+                cornerSound.currentTime = 0;
+                cornerSound.play();
+            } else if (hitX || hitY) {
+                bounceSound.currentTime = 0;
+                bounceSound.play();
+            }
 
-  </html>
+            // Check collisions with power-ups
+            // Image bounding box
+            let imgBox = {x: posX, y: posY, w: imgWidth, h: imgHeight};
+            let powerUps = [
+                {el: colorPU, name: 'color'},
+                {el: sizePU, name: 'size'},
+                {el: speedPU, name: 'speed'},
+            ];
+
+            powerUps.forEach(({el, name}) => {
+                let px = parseFloat(el.style.left);
+                let py = parseFloat(el.style.top);
+                if (intersects(imgBox.x, imgBox.y, imgBox.w, imgBox.h, px, py, 40, 40)) {
+                    // Trigger power-up effect and relocate
+                    if (name === 'color') {
+                        clearTimeout(colorTimeout);
+                        // Random hue rotation for color effect
+                        img.style.filter = 'hue-rotate(' + Math.floor(Math.random() * 360) + 'deg)';
+                        colorTimeout = setTimeout(() => {
+                            img.style.filter = 'none';
+                        }, 3000);
+                    } else if (name === 'size') {
+                        clearTimeout(sizeTimeout);
+                        imgWidth = 150;
+                        imgHeight = 150;
+                        img.style.width = imgWidth + 'px';
+                        img.style.height = imgHeight + 'px';
+                        sizeTimeout = setTimeout(() => {
+                            imgWidth = 100;
+                            imgHeight = 100;
+                            img.style.width = imgWidth + 'px';
+                            img.style.height = imgHeight + 'px';
+                        }, 3000);
+                    } else if (name === 'speed') {
+                        clearTimeout(speedTimeout);
+                        speedX *= 1.5;
+                        speedY *= 1.5;
+                        speedTimeout = setTimeout(() => {
+                            speedX = baseSpeedX * (speedX > 0 ? 1 : -1);
+                            speedY = baseSpeedY * (speedY > 0 ? 1 : -1);
+                        }, 3000);
+                    }
+                    placePowerUp(el);
+                }
+            });
+
+            img.style.left = posX + 'px';
+            img.style.top = posY + 'px';
+
+            requestAnimationFrame(update);
+        }
+
+        update();
+    </script>
+</body>
+</html>
