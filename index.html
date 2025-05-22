@@ -6,8 +6,9 @@
     <title>MelonDog</title>
     
 </head>
+<img id="bounceImage" src="images/wes.png" alt="wes">
 <body>
-   <h2>hey</h2>
+   
 </body>
     <script>
   document.addEventListener('contextmenu', e => e.preventDefault());
@@ -18,20 +19,62 @@
       return false;
     }
   };
+   const img = document.getElementById('bounceImage');
+  let posX = 0;
+  let posY = 0;
+  let speedX = 3;
+  let speedY = 2;
+
+  const imgWidth = 100;
+  const imgHeight = 100;
+
+  // Load sound
+  const bounceSound = new Audio('sounds/boing.mp3');
+
+  function update() {
+    posX += speedX;
+    posY += speedY;
+
+    // Bounce on X axis and play sound
+    if(posX + imgWidth > window.innerWidth || posX < 0) {
+      speedX = -speedX;
+      bounceSound.currentTime = 0;  // rewind to start so it can replay immediately
+      bounceSound.play();
+    }
+
+    // Bounce on Y axis and play sound
+    if(posY + imgHeight > window.innerHeight || posY < 0) {
+      speedY = -speedY;
+      bounceSound.currentTime = 0;
+      bounceSound.play();
+    }
+
+    img.style.left = posX + 'px';
+    img.style.top = posY + 'px';
+    bounceSound.volume = 1; // max volume
+
+
+    requestAnimationFrame(update);
+  }
+
+  update();
+
+  update(); // start animation
 </script>
 <style>
-    body
-    {
-    background: #2A7B9B;
-    background: linear-gradient(180deg, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 100%);
-    background-repeat: no-repeat;
-    height: 100vh;
+    body {
+      margin: 0;
+      overflow: hidden; /* prevent scrollbars */
+      position: relative;
+      height: 100vh;
+      background: linear-gradient(180deg, #2A7B9B 0%, #57C785 100%);
     }
-    h2
-    {
-        font-weight: lighter;
-        font-size: 140px;
-        font-family: Arial, Helvetica, sans-serif;
+    #bounceImage {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      user-select: none; /* prevent drag highlight */
     }
 </style>
+
   </html>
