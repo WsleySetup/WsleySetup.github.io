@@ -47,18 +47,65 @@
       transform: translate(-50%, -50%);
       font-size: 48px;
       font-weight: bold;
-      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
-      pointer-events: none;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
       user-select: none;
       z-index: 1000;
+      color: white;
     }
+    #fpsCounter, #dogCounter {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    user-select: none;
+    z-index: 1000;
+  }
+
+  #dogCounter {
+    top: 40px; /* put dog counter a bit below fps */
+  }
   </style>
 </head>
 <body>
   
   <div id="timer">00:00</div>
+  <div id="fpsCounter">FPS: <span id="fps"></span></div>
+<div id="dogCounter">Dogs: <span id="dogCount">1</span></div>
 
   <script>
+    window.requestAnimFrame = (function() {
+      return window.requestAnimationFrame ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame ||
+          window.ieRequestAnimationFrame ||
+          function(callback) {
+              window.setTimeout(callback, 1000 / 60);
+          };
+    })();
+
+    const dogCountEl = document.getElementById('dogCount');
+
+    function updateDogCount() {
+      dogCountEl.innerText = images.length;
+    }
+
+    let fpsElement = document.getElementById("fps");
+
+    let then = Date.now() / 1000;  // get time in seconds
+
+    let render = function() {
+      let now = Date.now() / 1000;  // get time in seconds
+      let elapsedTime = now - then;
+      then = now;
+      let fps = 1 / elapsedTime;
+      fpsElement.innerText = fps.toFixed(2);
+      requestAnimFrame(render);
+    };
+    render();
+
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.onkeydown = function(e) {
       if (
@@ -90,6 +137,8 @@
       img.classList.add('bounceImage');
       document.body.appendChild(img);
 
+      // Removed updateDogCount() from here since images array not updated yet
+
       return { el: img, x, y, speedX, speedY, width: imgWidth, height: imgHeight };
     }
 
@@ -109,11 +158,12 @@
       } else if (type === 'duplicate') {
         const clone = createBouncingImage(image.x, image.y, -image.speedX, -image.speedY);
         images.push(clone);
+        updateDogCount();  // Update count after adding duplicate dog
       }
     }
 
     function spawnPowerUp() {
-      if (powerUps.length >= 5) return;
+      if (powerUps.length >= 999) return;
 
       const types = ['speedup', 'sizechange', 'colorchange', 'duplicate'];
       const chosenType = types[Math.floor(Math.random() * types.length)];
@@ -209,9 +259,13 @@
       requestAnimationFrame(update);
     }
 
+    // Initial dog setup:
     images.push(createBouncingImage());
+    updateDogCount();
+
     setInterval(spawnPowerUp, 5000);
     update();
+
   </script>
 </body>
 </html>
