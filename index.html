@@ -20,46 +20,56 @@
     }
   };
    const img = document.getElementById('bounceImage');
-  let posX = 0;
-  let posY = 0;
-  let speedX = 3;
-  let speedY = 2;
+let posX = 0;
+let posY = 0;
+let speedX = 3;
+let speedY = 2;
 
-  const imgWidth = 100;
-  const imgHeight = 100;
+const imgWidth = 100;
+const imgHeight = 100;
 
-  // Load sound
-  const bounceSound = new Audio('sounds/boing.mp3');
+const bounceSound = new Audio('sounds/bounce.wav');
+const cornerSound = new Audio('sounds/corner.wav');
 
-  function update() {
-    posX += speedX;
-    posY += speedY;
+bounceSound.volume = 1;
+cornerSound.volume = 1;
 
-    // Bounce on X axis and play sound
-    if(posX + imgWidth > window.innerWidth || posX < 0) {
-      speedX = -speedX;
-      bounceSound.currentTime = 0;  // rewind to start so it can replay immediately
-      bounceSound.play();
-    }
+function update() {
+  posX += speedX;
+  posY += speedY;
 
-    // Bounce on Y axis and play sound
-    if(posY + imgHeight > window.innerHeight || posY < 0) {
-      speedY = -speedY;
-      bounceSound.currentTime = 0;
-      bounceSound.play();
-    }
+  let hitX = false;
+  let hitY = false;
 
-    img.style.left = posX + 'px';
-    img.style.top = posY + 'px';
-    bounceSound.volume = 1; // max volume
-
-
-    requestAnimationFrame(update);
+  // Check X boundaries
+  if (posX + imgWidth > window.innerWidth || posX < 0) {
+    speedX = -speedX;
+    hitX = true;
   }
 
-  update();
+  // Check Y boundaries
+  if (posY + imgHeight > window.innerHeight || posY < 0) {
+    speedY = -speedY;
+    hitY = true;
+  }
 
-  update(); // start animation
+  // Play appropriate sound
+  if (hitX && hitY) {
+    cornerSound.currentTime = 0;
+    cornerSound.play();
+  } else if (hitX || hitY) {
+    bounceSound.currentTime = 0;
+    bounceSound.play();
+  }
+
+  img.style.left = posX + 'px';
+  img.style.top = posY + 'px';
+
+  requestAnimationFrame(update);
+}
+
+update();
+
 </script>
 <style>
     body {
