@@ -1,186 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MelonDog</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            position: relative;
-            height: 100vh;
-            background: linear-gradient(180deg, #2A7B9B 0%, #57C785 100%);
-        }
-        #bounceImage {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            user-select: none;
-            transition: filter 0.3s;
-        }
-        .powerUp {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.8;
-        }
-        #colorPowerUp {
-            width: 40px;
-            height: 40px;
-            background: yellow;
-        }
-        #sizePowerUp {
-            width: 40px;
-            height: 40px;
-            background: orange;
-        }
-        #speedPowerUp {
-            width: 40px;
-            height: 40px;
-            background: purple;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MelonDog</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden; /* prevent scrollbars */
+      position: relative;
+      height: 100vh;
+      background: linear-gradient(180deg, #2a7b9b 0%, #57c785 100%);
+    }
+    #bounceImage {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      user-select: none; /* prevent drag highlight */
+      left: 0;
+      top: 0;
+      filter: hue-rotate(0deg);
+      transition: filter 0.5s ease;
+    }
+    .powerup {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+    .speedup {
+      background: #ff5722;
+      box-shadow: 0 0 10px #ff5722;
+    }
+    .sizechange {
+      background: #2196f3;
+      box-shadow: 0 0 10px #2196f3;
+    }
+    .colorchange {
+      background: #e91e63;
+      box-shadow: 0 0 10px #e91e63;
+    }
+  </style>
 </head>
 <body>
-    <img id="bounceImage" src="images/wes.png" alt="wes" />
-    <div id="colorPowerUp" class="powerUp"></div>
-    <div id="sizePowerUp" class="powerUp"></div>
-    <div id="speedPowerUp" class="powerUp"></div>
+  <img id="bounceImage" src="images/wes.png" alt="wes" />
 
-    <script>
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.onkeydown = function(e) {
-            if (
-                e.keyCode === 123 || // F12
-                (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I/J
-                (e.ctrlKey && e.keyCode === 85) // Ctrl+U
-            ) {
-                return false;
-            }
-        };
+  <script>
+    // Disable right click & certain keys (F12, Ctrl+Shift+I/J, Ctrl+U)
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.onkeydown = function(e) {
+      if (
+        e.keyCode === 123 || // F12
+        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I/J
+        (e.ctrlKey && e.keyCode === 85) // Ctrl+U
+      ) {
+        return false;
+      }
+    };
 
-        const img = document.getElementById('bounceImage');
-        const colorPU = document.getElementById('colorPowerUp');
-        const sizePU = document.getElementById('sizePowerUp');
-        const speedPU = document.getElementById('speedPowerUp');
+    const img = document.getElementById('bounceImage');
+    let posX = 0;
+    let posY = 0;
+    let speedX = 6;
+    let speedY = 4;
 
-        let posX = 0;
-        let posY = 0;
-        let speedX = 6;
-        let speedY = 4;
+    const imgWidth = 100;
+    const imgHeight = 100;
 
-        const baseSpeedX = speedX;
-        const baseSpeedY = speedY;
+    // Sounds
+    const bounceSound = new Audio('sounds/boing.mp3');
+    const cornerSound = new Audio('sounds/corner.mp3');
+    const powerupSound = new Audio('sounds/powerup.mp3');
 
-        let imgWidth = 100;
-        let imgHeight = 100;
+    bounceSound.volume = 1;
+    cornerSound.volume = 1;
+    powerupSound.volume = 0.1;
 
-        // Place power-ups randomly inside viewport
-        function placePowerUp(el) {
-            el.style.left = Math.random() * (window.innerWidth - 40) + 'px';
-            el.style.top = Math.random() * (window.innerHeight - 40) + 'px';
+    // Power-ups array
+    const powerUps = [];
+
+    // Apply power-up effect
+    function applyPowerUp(type) {
+      if (type === 'speedup') {
+        speedX *= 1.5;
+        speedY *= 1.5;
+      } else if (type === 'sizechange') {
+        let newWidth = imgWidth * (Math.random() > 0.5 ? 1.5 : 0.7);
+        let newHeight = imgHeight * (Math.random() > 0.5 ? 1.5 : 0.7);
+        img.style.width = newWidth + 'px';
+        img.style.height = newHeight + 'px';
+      } else if (type === 'colorchange') {
+        // Random hue rotation for color change
+        const hue = Math.floor(Math.random() * 360);
+        img.style.filter = `hue-rotate(${hue}deg)`;
+      }
+    }
+
+    // Spawn power-up randomly on screen, but with a delay between spawns
+    function spawnPowerUp() {
+      if (powerUps.length >= 9999) {
+        // Only allow one powerup at a time
+        return;
+      }
+
+      const types = ['speedup', 'sizechange', 'colorchange'];
+      const chosenType = types[Math.floor(Math.random() * types.length)];
+
+      const powerupEl = document.createElement('div');
+      powerupEl.classList.add('powerup', chosenType);
+
+      // Random position inside window bounds (consider power-up size)
+      const padding = 50;
+      const x = Math.random() * (window.innerWidth - padding * 2) + padding;
+      const y = Math.random() * (window.innerHeight - padding * 2) + padding;
+
+      powerupEl.style.left = x + 'px';
+      powerupEl.style.top = y + 'px';
+
+      document.body.appendChild(powerupEl);
+
+      powerUps.push({ el: powerupEl, name: chosenType });
+    }
+
+    // Collision detection helper
+    function isColliding(ax, ay, aw, ah, bx, by, bw, bh) {
+      return ax < bx + bw &&
+             ax + aw > bx &&
+             ay < by + bh &&
+             ay + ah > by;
+    }
+
+    // Main animation loop
+    function update() {
+      posX += speedX;
+      posY += speedY;
+
+      let hitX = false;
+      let hitY = false;
+
+      // Bounce off edges
+      if (posX + imgWidth > window.innerWidth) {
+        posX = window.innerWidth - imgWidth;
+        speedX = -speedX;
+        hitX = true;
+      }
+      if (posX < 0) {
+        posX = 0;
+        speedX = -speedX;
+        hitX = true;
+      }
+      if (posY + imgHeight > window.innerHeight) {
+        posY = window.innerHeight - imgHeight;
+        speedY = -speedY;
+        hitY = true;
+      }
+      if (posY < 0) {
+        posY = 0;
+        speedY = -speedY;
+        hitY = true;
+      }
+
+      if (hitX && hitY) {
+        cornerSound.currentTime = 0;
+        cornerSound.play();
+      } else if (hitX || hitY) {
+        bounceSound.currentTime = 0;
+        bounceSound.play();
+      }
+
+      img.style.left = posX + 'px';
+      img.style.top = posY + 'px';
+
+      // Check collision with power-ups
+      for (let i = powerUps.length - 1; i >= 0; i--) {
+        const p = powerUps[i];
+        const rectPowerUp = p.el.getBoundingClientRect();
+        const rectDog = img.getBoundingClientRect();
+
+        if (isColliding(
+          rectDog.left, rectDog.top, rectDog.width, rectDog.height,
+          rectPowerUp.left, rectPowerUp.top, rectPowerUp.width, rectPowerUp.height
+        )) {
+          applyPowerUp(p.name);
+          powerupSound.currentTime = 0;
+          powerupSound.play();
+          document.body.removeChild(p.el);
+          powerUps.splice(i, 1);
         }
-        placePowerUp(colorPU);
-        placePowerUp(sizePU);
-        placePowerUp(speedPU);
+      }
 
-        // Sounds
-        const bounceSound = new Audio('sounds/boing.mp3');
-        const cornerSound = new Audio('sounds/corner.mp3');
+      requestAnimationFrame(update);
+    }
 
-        bounceSound.volume = 1;
-        cornerSound.volume = 1;
+    // Spawn power-ups every 7 seconds
+    setInterval(spawnPowerUp, 5000);
 
-        // Helpers
-        function intersects(x1, y1, w1, h1, x2, y2, w2, h2) {
-            return !(x2 > x1 + w1 || 
-                     x2 + w2 < x1 || 
-                     y2 > y1 + h1 || 
-                     y2 + h2 < y1);
-        }
-
-        // Power-up effect timers
-        let colorTimeout, sizeTimeout, speedTimeout;
-
-        function update() {
-            posX += speedX;
-            posY += speedY;
-
-            let hitX = false;
-            let hitY = false;
-
-            // Bounce on window edges
-            if (posX + imgWidth > window.innerWidth || posX < 0) {
-                speedX = -speedX;
-                hitX = true;
-            }
-            if (posY + imgHeight > window.innerHeight || posY < 0) {
-                speedY = -speedY;
-                hitY = true;
-            }
-
-            // Play sounds
-            if (hitX && hitY) {
-                cornerSound.currentTime = 0;
-                cornerSound.play();
-            } else if (hitX || hitY) {
-                bounceSound.currentTime = 0;
-                bounceSound.play();
-            }
-
-            // Check collisions with power-ups
-            // Image bounding box
-            let imgBox = {x: posX, y: posY, w: imgWidth, h: imgHeight};
-            let powerUps = [
-                {el: colorPU, name: 'color'},
-                {el: sizePU, name: 'size'},
-                {el: speedPU, name: 'speed'},
-            ];
-
-            powerUps.forEach(({el, name}) => {
-                let px = parseFloat(el.style.left);
-                let py = parseFloat(el.style.top);
-                if (intersects(imgBox.x, imgBox.y, imgBox.w, imgBox.h, px, py, 40, 40)) {
-                    // Trigger power-up effect and relocate
-                    if (name === 'color') {
-                        clearTimeout(colorTimeout);
-                        // Random hue rotation for color effect
-                        img.style.filter = 'hue-rotate(' + Math.floor(Math.random() * 360) + 'deg)';
-                        colorTimeout = setTimeout(() => {
-                            img.style.filter = 'none';
-                        }, 3000);
-                    } else if (name === 'size') {
-                        clearTimeout(sizeTimeout);
-                        imgWidth = 150;
-                        imgHeight = 150;
-                        img.style.width = imgWidth + 'px';
-                        img.style.height = imgHeight + 'px';
-                        sizeTimeout = setTimeout(() => {
-                            imgWidth = 100;
-                            imgHeight = 100;
-                            img.style.width = imgWidth + 'px';
-                            img.style.height = imgHeight + 'px';
-                        }, 3000);
-                    } else if (name === 'speed') {
-                        clearTimeout(speedTimeout);
-                        speedX *= 1.5;
-                        speedY *= 1.5;
-                        speedTimeout = setTimeout(() => {
-                            speedX = baseSpeedX * (speedX > 0 ? 1 : -1);
-                            speedY = baseSpeedY * (speedY > 0 ? 1 : -1);
-                        }, 3000);
-                    }
-                    placePowerUp(el);
-                }
-            });
-
-            img.style.left = posX + 'px';
-            img.style.top = posY + 'px';
-
-            requestAnimationFrame(update);
-        }
-
-        update();
-    </script>
+    // Start
+    update();
+  </script>
 </body>
 </html>
