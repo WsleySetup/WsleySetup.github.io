@@ -22,14 +22,14 @@
    const img = document.getElementById('bounceImage');
 let posX = 0;
 let posY = 0;
-let speedX = 3;
-let speedY = 2;
+let speedX = 6;
+let speedY = 4;
 
 const imgWidth = 100;
 const imgHeight = 100;
 
-const bounceSound = new Audio('sounds/bounce.wav');
-const cornerSound = new Audio('sounds/corner.wav');
+const bounceSound = new Audio('sounds/boing.mp3');
+const cornerSound = new Audio('sounds/corner.mp3');
 
 bounceSound.volume = 1;
 cornerSound.volume = 1;
@@ -65,7 +65,8 @@ function update() {
   img.style.left = posX + 'px';
   img.style.top = posY + 'px';
 
-  requestAnimationFrame(update);
+  setTimeout(update, 1); // roughly 60fps
+
 }
 
 update();
