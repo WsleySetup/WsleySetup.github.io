@@ -112,6 +112,7 @@ body {
   color: black;
   font-size: 22px;
   font-weight: bold;
+  z-index: 9999;
 }
  /* Overlay */
 #popup-overlay {
