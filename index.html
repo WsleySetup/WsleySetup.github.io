@@ -104,8 +104,36 @@
   text-align: center;
   font-weight: bold;
 }
+#versiontext
+{
+  position: fixed;
+  bottom: 0px;
+  right: 10px;
+  color: black;
+}
+ #popup {
+      display: none;
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: gray;
+      color: black;
+      border: 3px solid black;
+      z-index: 999;
+    }
 
-
+    #popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 998;
+    }
   
  
   
@@ -113,7 +141,7 @@
 </head>
 <body onclick="startMusic()">
   
-  <div id="timer">00:00</div>
+  <div id="timer">00:00:00</div>
   <div id="fpsCounter">FPS: <span id="fps"></span></div>
 <div id="dogCounter">Dogs: <span id="dogCount">1</span></div>
 
@@ -134,9 +162,36 @@
     <div class="label">SFX</div>
   </div>
 </div>
+
+
+<a id="versiontext" href="#" onclick="showPopup()" >Version: 1.9.2</a>
+
+
+<div id="popup-overlay" onclick="hidePopup()"></div>
+<div id="popup">
+  <p>Update Log: 
+    <br>
+    Version 1.9.3: added this update log along with the game version in the bottom 
+    <br>
+    <br>
+    Version 1.9.2: added background music, 2 buttons to mute and unmute the sounds and the background music
+
+
+
+</p>
+  <button onclick="hidePopup()">Close</button>
+</div>
   <script>
 
-    
+    function showPopup() {
+    document.getElementById("popup").style.display = "block";
+    document.getElementById("popup-overlay").style.display = "block";
+  }
+
+  function hidePopup() {
+    document.getElementById("popup").style.display = "none";
+    document.getElementById("popup-overlay").style.display = "none";
+  }
 
      function startMusic() {
     const music = document.getElementById("bg-music");
@@ -279,13 +334,16 @@ function toggleSFXMute() {
 
     let startTime = Date.now();
     function updateTimer() {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      const minutes = Math.floor(elapsed / 60);
-      const seconds = elapsed % 60;
-      timerEl.textContent =
-        (minutes < 10 ? '0' : '') + minutes + ':' +
-        (seconds < 10 ? '0' : '') + seconds;
-    }
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  const hours = Math.floor(elapsed / 3600);
+  const minutes = Math.floor((elapsed % 3600) / 60);
+  const seconds = elapsed % 60;
+
+  timerEl.textContent =
+    (hours < 10 ? '0' : '') + hours + ':' +
+    (minutes < 10 ? '0' : '') + minutes + ':' +
+    (seconds < 10 ? '0' : '') + seconds;
+}
 
     function update() {
       for (let img of images) {
