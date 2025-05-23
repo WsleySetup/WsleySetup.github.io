@@ -4,84 +4,76 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Melondog</title>
-  <link rel="icon" type="image/x-icon" href="images/wes.png">
+  <link rel="icon" type="image/x-icon" href="images/wes.png" />
   <link rel="stylesheet" href="index.css" />
 </head>
 <body onclick="startMusic()">
-  
+
   <div id="timer">00:00:00</div>
 
   <div id="fpsCounter">FPS: <span id="fps"></span></div>
 
-<div id="dogCounter">Dogs: <span id="dogCount">1</span></div>
+  <div id="dogCounter">Dogs: <span id="dogCount">1</span></div>
 
-<div id="powerupScore">Score: <span id="powerupCount">0</span></div>
+  <div id="powerupScore">Score: <span id="powerupCount">0</span></div>
 
-<div id="usernameDisplay">Username: <span id="usernameText" style="cursor:pointer; text-decoration: underline;">(click to change)</span>
-</div>
+  <div id="usernameDisplay">Username: <span id="usernameText" class="clickable">(click to change)</span></div>
 
-<audio id="bg-music" controls loop hidden>
-  <source src="https://github.com/WsleySetup/WsleySetup.github.io/releases/download/music/music.mp3" type="audio/mpeg">
-  Your browser does not support the audio tag.
-</audio>
+  <audio id="bg-music" controls loop hidden>
+    <source src="https://github.com/WsleySetup/WsleySetup.github.io/releases/download/music/music.mp3" type="audio/mpeg" />
+    Your browser does not support the audio tag.
+  </audio>
 
+  <div id="leaderboard" class="leaderboard-container"></div>
 
-<div id="leaderboard" class="leaderboard-container"></div>
-<div id="leaderboard" class="leaderboard-container"></div>
+  
 
+  <button id="optionsToggleBtn">⚙️ Options</button>
 
-<div id="mutemusic-container">
+  <div id="optionsMenu">
+  <h3>Options</h3>
+
+  <div id="mutemusic-container">
   <div class="sound-block">
     <button id="mutemusic" onclick="toggleMute()">🔊</button>
+    <input id="musicVolume" type="range" min="0" max="1" step="0.01" value="1">
     <div class="label">music</div>
   </div>
 
   <div class="sound-block">
     <button id="mutesfx" onclick="toggleSFXMute()">🔊</button>
+    <input id="sfxVolume" type="range" min="0" max="1" step="0.01" value="1">
     <div class="label">SFX</div>
   </div>
-
-  <div class="sound-block">
-    <button id="mutesfx" onclick="saveGame()">💾</button>
-    <div class="label">Save</div>
-  </div>
-
-  <div class="sound-block">
-    <button id="mutesfx" onclick="loadGame()">📂</button>
-    <div class="label">Load</div>
-  </div>
-
-
-<a id="versiontext" href="#" onclick="showPopup()" >Version: 1.9.5</a>
-
-
-
-
-
-
-
-<div id="popup-overlay" onclick="hidePopup()"></div>
-<div id="popup">
-  <p>Update Log: 
-    <br>
-    <br>
-    Version 1.9.5: added live leaderboard and daniel(ragemaster) added save and load buttons
-    <br>
-    <br>
-    Version 1.9.4: added a score counter for the amount of powerups picked up.
-    <br>
-    <br>
-    Version 1.9.3: added this update log along with the game version in the bottom 
-    <br>
-    <br>
-    Version 1.9.2: added background music, 2 buttons to mute and unmute the sounds and the background music
-
-
-
-</p>
-  <button onclick="hidePopup()">Close</button>
 </div>
 
- <script src="index.js"></script>
+  <div id="saveLoadButtons">
+    <button id="saveButton" onclick="saveGame()">💾 Save</button>
+    <button id="loadButton" onclick="loadGame()">📂 Load</button>
+    <button id="resetButton">🔄 Reset Game</button>
+  </div>
+  
+</div>
+
+  <a href="#" id="versiontext">Version: 1.9.5</a>
+
+<div id="popup-overlay"></div>
+<div id="popup">
+  <p>
+    <strong>Update Log:</strong>
+    <br /><br />
+    Version 1.9.5: added live leaderboard and daniel(ragemaster) added save and load buttons
+    <br /><br />
+    Version 1.9.4: added a score counter for the amount of powerups picked up.
+    <br /><br />
+    Version 1.9.3: added this update log along with the game version in the bottom
+    <br /><br />
+    Version 1.9.2: added background music, 2 buttons to mute and unmute the sounds and the background music
+  </p>
+  <button id="closePopupBtn">Close</button>
+</div>
+
+
+  <script src="index.js"></script>
 </body>
 </html>

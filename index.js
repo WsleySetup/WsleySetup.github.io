@@ -1,11 +1,10 @@
 
-
 window.onload = function() {
   promptUsername();
-
-  // After starting the game, send current score immediately:
   sendCurrentScore();
 };
+
+let username = localStorage.getItem('username') || 'Guest';
 
 function sendCurrentScore() {
   if (!username) return; // no username, don't send
@@ -181,8 +180,76 @@ window.addEventListener('beforeunload', () => {
   navigator.sendBeacon('https://melondog-server.onrender.com/score', new Blob([data], { type: 'application/json' }));
 });
 
+ 
+  let musicOn = true;
+  let sfxOn = true;
 
+  const optionsMenu = document.getElementById('optionsMenu');
+  const toggleBtn = document.getElementById('optionsToggleBtn');
 
+  // Toggle menu visibility
+  toggleBtn.addEventListener('click', () => {
+    if (optionsMenu.style.display === 'none' || optionsMenu.style.display === '') {
+      optionsMenu.style.display = 'block';
+    } else {
+      optionsMenu.style.display = 'none';
+    }
+  });
+
+  document.getElementById('resetButton').addEventListener('click', () => {
+  if (confirm("Are you sure you want to reset the game? All progress will be lost.")) {
+    // Clear all saved data in localStorage
+    localStorage.clear();
+
+    // Reset username variable
+    username = '';
+
+    // Reset UI elements to initial state
+    document.getElementById('dogCount').textContent = '1';
+    document.getElementById('powerupCount').textContent = '0';
+    document.getElementById('fps').textContent = '';
+    document.getElementById('usernameText').textContent = '(click to change)';
+
+    // Optionally reset in-memory arrays (images, powerUps)
+    // Remove existing images from DOM
+    images.forEach(dog => dog.el.remove());
+    images.length = 0;
+    powerUps.forEach(p => p.el.remove());
+    powerUps.length = 0;
+
+    // Add initial dog again
+    images.push(createBouncingImage());
+    updateDogCount();
+
+    // Reset start time for timer
+    startTime = Date.now();
+
+    // Update timer display immediately
+    updateTimer();
+
+    alert("Game has been reset.");
+  }
+});
+const popup = document.getElementById('popup');
+  const overlay = document.getElementById('popup-overlay');
+  const versionText = document.getElementById('versiontext');
+  const closeBtn = document.getElementById('closePopupBtn');
+
+  versionText.addEventListener('click', e => {
+    e.preventDefault();
+    popup.classList.add('show');
+    overlay.classList.add('show');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    popup.classList.remove('show');
+    overlay.classList.remove('show');
+  });
+
+  overlay.addEventListener('click', () => {
+    popup.classList.remove('show');
+    overlay.classList.remove('show');
+  });
 
 // Get leaderboard from server
 fetch('https://melondog-server.onrender.com/leaderboard')
@@ -195,15 +262,7 @@ leaderboardEl.innerHTML = '<h3>Top Scores</h3>' + data.map(
 ).join('');
   });
 
-    function showPopup() {
-    document.getElementById("popup").style.display = "block";
-    document.getElementById("popup-overlay").style.display = "block";
-  }
-
-  function hidePopup() {
-    document.getElementById("popup").style.display = "none";
-    document.getElementById("popup-overlay").style.display = "none";
-  }
+    
 
      function startMusic() {
     const music = document.getElementById("bg-music");
@@ -215,13 +274,19 @@ leaderboardEl.innerHTML = '<h3>Top Scores</h3>' + data.map(
   }
 
     const bgMusic = document.getElementById("bg-music");
-  const button = document.querySelector("button");
+  const musicbutton = document.getElementById("mutemusic");
 
   function toggleMute() {
-    bgMusic.muted = !bgMusic.muted;
-    button.textContent = bgMusic.muted ? "🔇" : "🔊";
-  }
-  let sfxMuted = false;
+  const bgMusic = document.getElementById('bg-music');
+  const musicbutton = document.getElementById('mutemusic');
+  if (!bgMusic || !musicbutton) return; // safety check
+
+  bgMusic.muted = !bgMusic.muted;
+  musicbutton.textContent = bgMusic.muted ? "🔇" : "🔊";
+}
+
+// You can keep this outside for SFX mute toggle if needed
+let sfxMuted = false;
 const sfxButton = document.getElementById("mutesfx");
 
 
@@ -232,6 +297,9 @@ function toggleSFXMute() {
   powerupSound.muted = sfxMuted;
   sfxButton.textContent = sfxMuted ? "🔇" : "🔊";
 }
+
+
+
 
     window.requestAnimFrame = (function() {
       return window.requestAnimationFrame ||
@@ -284,7 +352,7 @@ function toggleSFXMute() {
     const powerupSound = new Audio('sounds/powerup.mp3');
     bounceSound.volume = 1;
     cornerSound.volume = 1;
-    powerupSound.volume = 0.1;
+    powerupSound.volume = 0.01;
 
     const powerUps = [];
     const images = [];
@@ -299,6 +367,54 @@ function toggleSFXMute() {
 
       return { el: img, x, y, speedX, speedY, width: imgWidth, height: imgHeight };
     }
+
+     const musicVolumeSlider = document.getElementById('musicVolume');
+  const sfxVolumeSlider = document.getElementById('sfxVolume');
+
+  if (bgMusic && musicVolumeSlider) {
+    bgMusic.volume = parseFloat(musicVolumeSlider.value);
+    musicVolumeSlider.addEventListener('input', () => {
+      const vol = parseFloat(musicVolumeSlider.value);
+      console.log("Music volume slider:", vol);
+      bgMusic.volume = vol;
+      if (vol === 0) {
+        bgMusic.muted = true;
+        document.getElementById('mutemusic').textContent = "🔇";
+      } else {
+        bgMusic.muted = false;
+        document.getElementById('mutemusic').textContent = "🔊";
+      }
+    });
+  }
+
+  if (sfxVolumeSlider) {
+  const setSfxVolumes = (vol) => {
+    if (bounceSound) {
+      bounceSound.volume = vol;
+      bounceSound.muted = (vol === 0);
+    }
+    if (cornerSound) {
+      cornerSound.volume = vol;
+      cornerSound.muted = (vol === 0);
+    }
+    if (powerupSound) {
+      powerupSound.volume = vol * 0.1;  // 10% volume for powerupSound
+      powerupSound.muted = (vol === 0);
+    }
+  };
+
+  // Initialize volumes once on load
+  setSfxVolumes(parseFloat(sfxVolumeSlider.value));
+
+  sfxVolumeSlider.addEventListener('input', () => {
+    const vol = parseFloat(sfxVolumeSlider.value);
+    console.log("SFX volume slider:", vol);
+    setSfxVolumes(vol);
+
+    document.getElementById('mutesfx').textContent = (vol === 0) ? "🔇" : "🔊";
+  });
+}
+
 
     function loadGame() {
       const savedState = localStorage.getItem('melondogSave');
@@ -351,10 +467,12 @@ function toggleSFXMute() {
       sfxButton.textContent = sfxMuted ? "🔇" : "🔊";
 
       bgMusic.muted = gameState.bgMusicMuted;
-      button.textContent = bgMusic.muted ? "🔇" : "🔊";
+      musicbutton.textContent = bgMusic.muted ? "🔇" : "🔊";
       if (!bgMusic.muted) {
         bgMusic.play().catch(e => console.warn("Autoplay failed on load:", e));
       }
+
+      
 
       alert("Game Loaded!");
     }
