@@ -52,7 +52,7 @@
       z-index: 1000;
       color: white;
     }
-    #fpsCounter, #dogCounter {
+    #fpsCounter, #dogCounter, #usernameDisplay {
     position: fixed;
     top: 10px;
     left: 10px;
@@ -146,6 +146,10 @@
   user-select: none;
   z-index: 1000;
 }
+#usernameDisplay
+{
+  top:100px;
+}
   
   </style>
 </head>
@@ -155,11 +159,13 @@
   <div id="fpsCounter">FPS: <span id="fps"></span></div>
 <div id="dogCounter">Dogs: <span id="dogCount">1</span></div>
 <div id="powerupScore">Score: <span id="powerupCount">0</span></div>
-
+<div id="usernameDisplay">Username: <span id="usernameText" style="cursor:pointer; text-decoration: underline;">(click to change)</span>
+</div>
 <audio id="bg-music" controls loop hidden>
   <source src="https://github.com/WsleySetup/WsleySetup.github.io/releases/download/music/music.mp3" type="audio/mpeg">
   Your browser does not support the audio tag.
 </audio>
+<div id="leaderboard" style="position: fixed; top: 100px; right: 10px; color: white; z-index: 1000;"></div>
 
 
 <div id="mutemusic-container">
@@ -198,20 +204,19 @@
 
   <script>
 
-let username = "";
+window.onload = function() {
+  promptUsername();
 
-function promptUsername() {
-  username = prompt("Enter your username to start:");
-  if (!username || username.trim() === "") {
-    alert("You need a username to play.");
-    promptUsername();
-  } else {
-    startGame();
-  }
-}
+  // After starting the game, send current score immediately:
+  sendCurrentScore();
+};
 
-function submitScore(score) {
-  fetch("https://your-server.com/score", {
+function sendCurrentScore() {
+  if (!username) return; // no username, don't send
+
+  const score = parseInt(document.getElementById("powerupCount").innerText) || 0;
+
+  fetch("https://melondog-server.onrender.com/score", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -224,39 +229,108 @@ function submitScore(score) {
   });
 }
 
-// Example: Call this when the user closes the tab or game ends
-window.addEventListener("beforeunload", () => {
-  const score = parseInt(document.getElementById("powerupCount").innerText);
-  if (username) submitScore(score);
+function promptUsername() {
+  let savedName = localStorage.getItem("username");
+  if (savedName) {
+    username = savedName;
+    updateUsernameDisplay();
+    startGame();
+  } else {
+    username = prompt("Enter your username to start:");
+    if (!username || username.trim() === "") {
+      alert("You need a username to play.");
+      promptUsername();
+    } else {
+      localStorage.setItem("username", username);
+      updateUsernameDisplay();
+      startGame();
+    }
+  }
+}
+
+function updateUsernameDisplay() {
+  const usernameText = document.getElementById("usernameText");
+  usernameText.textContent = username || "Guest";
+}
+
+document.getElementById("usernameText").addEventListener("click", () => {
+  username = prompt("Enter your username to start:");
+  if (username && username.trim() !== "") {
+    localStorage.setItem("username", username);
+    updateUsernameDisplay();
+  }
 });
 
-window.addEventListener('beforeunload', () => {
-  const username = prompt("Enter your username to save your score:");
-  const score = currentScore; // get your current score variable here
+function submitScore(score) {
+  fetch("https://melondog-server.onrender.com/score", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ username, score })
+  }).then(res => {
+    if (!res.ok) throw new Error("Failed to save score");
+  }).catch(err => {
+    console.error("Score submission failed:", err);
+  });
+}
 
-  if (!username) return; // skip if no username
+function sendScore() {
+  const powerupScoreEl = document.getElementById("powerupCount");
+  const score = parseInt(powerupScoreEl.innerText) || 0;
+
+  if (!username) return; // No username, no score sent
+
+  fetch("https://melondog-server.onrender.com/score", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, score })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Failed to save score");
+    console.log(`Score sent: ${score} for ${username}`);
+  })
+  .catch(err => {
+    console.error("Score submission failed:", err);
+  });
+}
+
+// Send score every 30 seconds while playing
+setInterval(sendScore, 3000);
+
+// Also send score when user leaves or refreshes page (uses navigator.sendBeacon for reliability)
+window.addEventListener('pagehide', () => {
+  if (!username) return;
+
+  const powerupScoreEl = document.getElementById("powerupCount");
+  const score = parseInt(powerupScoreEl.innerText) || 0;
 
   const data = JSON.stringify({ username, score });
-
-  // sendBeacon sends data reliably even when the page is unloading
-  navigator.sendBeacon('https://your-render-url.onrender.com/score', new Blob([data], { type: 'application/json' }));
+  navigator.sendBeacon('https://melondog-server.onrender.com/score', new Blob([data], { type: 'application/json' }));
 });
 
-fetch('https://melondog-server.onrender.com/score', {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify({username: 'player1', score: 123})
-})
-.then(res => res.json())
-.then(data => console.log('Score submitted:', data))
-.catch(err => console.error('Error:', err));
+// Example: Call this when the user closes the tab or game ends
+window.addEventListener('beforeunload', () => {
+  if (!username) return;
+
+  const score = parseInt(document.getElementById("powerupCount").innerText) || 0;
+  const data = JSON.stringify({ username, score });
+
+  navigator.sendBeacon('https://melondog-server.onrender.com/score', new Blob([data], { type: 'application/json' }));
+});
+
+
+
 
 // Get leaderboard from server
 fetch('https://melondog-server.onrender.com/leaderboard')
   .then(res => res.json())
   .then(data => {
     console.log('Leaderboard:', data);
-    // You can add code here to display it in your game UI
+    const leaderboardEl = document.getElementById("leaderboard");
+leaderboardEl.innerHTML = '<h3>Top Scores</h3>' + data.map(
+  entry => `<div>${entry.username}: ${entry.score}</div>`
+).join('');
   });
 
     function showPopup() {
