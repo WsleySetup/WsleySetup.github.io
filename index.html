@@ -199,18 +199,45 @@
 
   <script>
 
-let username = "";
 window.onload = function() {
   promptUsername();
+
+  // After starting the game, send current score immediately:
+  sendCurrentScore();
 };
 
+function sendCurrentScore() {
+  if (!username) return; // no username, don't send
+
+  const score = parseInt(document.getElementById("powerupCount").innerText) || 0;
+
+  fetch("https://melondog-server.onrender.com/score", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ username, score })
+  }).then(res => {
+    if (!res.ok) throw new Error("Failed to save score");
+  }).catch(err => {
+    console.error("Score submission failed:", err);
+  });
+}
+
 function promptUsername() {
-  username = prompt("Enter your username to start:");
-  if (!username || username.trim() === "") {
-    alert("You need a username to play.");
-    promptUsername();
-  } else {
+  let savedName = localStorage.getItem("username");
+  if (savedName) {
+    username = savedName;
     startGame();
+  } else {
+    username = prompt("Enter your username to start:");
+    if (!username || username.trim() === "") {
+      alert("You need a username to play.");
+      promptUsername();
+    } else {
+      localStorage.setItem("username", username);
+      startGame();
+    }
   }
 }
 
