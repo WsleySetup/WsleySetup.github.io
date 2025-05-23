@@ -135,7 +135,17 @@
       z-index: 998;
     }
   
- 
+ #powerupScore {
+  position: fixed;
+  top: 70px; /* below dogCounter */
+  left: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+  user-select: none;
+  z-index: 1000;
+}
   
   </style>
 </head>
@@ -144,7 +154,7 @@
   <div id="timer">00:00:00</div>
   <div id="fpsCounter">FPS: <span id="fps"></span></div>
 <div id="dogCounter">Dogs: <span id="dogCount">1</span></div>
-
+<div id="powerupScore">Score: <span id="powerupCount">0</span></div>
 
 <audio id="bg-music" controls loop hidden>
   <source src="https://github.com/WsleySetup/WsleySetup.github.io/releases/download/music/music.mp3" type="audio/mpeg">
@@ -164,12 +174,16 @@
 </div>
 
 
-<a id="versiontext" href="#" onclick="showPopup()" >Version: 1.9.3</a>
+<a id="versiontext" href="#" onclick="showPopup()" >Version: 1.9.4</a>
 
 
 <div id="popup-overlay" onclick="hidePopup()"></div>
 <div id="popup">
   <p>Update Log: 
+    <br>
+    <br>
+    Version 1.9.4: added a score counter for the amount of powerups picked up.
+    <br>
     <br>
     Version 1.9.3: added this update log along with the game version in the bottom 
     <br>
@@ -289,6 +303,9 @@ function toggleSFXMute() {
     }
 
     function applyPowerUp(type, image) {
+      const powerupScoreEl = document.getElementById("powerupCount");
+let currentScore = parseInt(powerupScoreEl.innerText);
+powerupScoreEl.innerText = currentScore + 1;
       if (type === 'speedup') {
         image.speedX *= 1.5;
         image.speedY *= 1.5;
