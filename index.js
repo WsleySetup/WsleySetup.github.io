@@ -1,5 +1,6 @@
 
 window.onload = function() {
+  
   promptUsername();
   sendCurrentScore();
 };
@@ -23,6 +24,7 @@ function sendCurrentScore() {
     console.error("Score submission failed:", err);
   });
 }
+
 
 function promptUsername() {
   let savedName = localStorage.getItem("username");
@@ -69,6 +71,20 @@ function submitScore(score) {
     if (!res.ok) throw new Error("Failed to save score");
   }).catch(err => {
     console.error("Score submission failed:", err);
+  });
+}
+
+async function updateUsername(userId, oldUsername, newUsername, currentScore) {
+  if (oldUsername && oldUsername !== newUsername) {
+    // Delete old username from leaderboard
+    await db.collection('leaderboard').doc(oldUsername).delete();
+  }
+
+  // Add or update new username entry with current score
+  await db.collection('leaderboard').doc(newUsername).set({
+    userId,
+    score: currentScore,
+    updatedAt: new Date(),
   });
 }
 
