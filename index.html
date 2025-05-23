@@ -150,6 +150,19 @@
 {
   top:100px;
 }
+
+.leaderboard-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: rgba(0, 0, 0, 0.7); /* translucent black */
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-family: sans-serif;
+  max-width: 200px;
+  z-index: 1000;
+}
   
   </style>
 </head>
@@ -165,7 +178,7 @@
   <source src="https://github.com/WsleySetup/WsleySetup.github.io/releases/download/music/music.mp3" type="audio/mpeg">
   Your browser does not support the audio tag.
 </audio>
-<div id="leaderboard" style="position: fixed; top: 100px; right: 10px; color: white; z-index: 1000;"></div>
+<div id="leaderboard" class="leaderboard-container"></div>
 
 
 <div id="mutemusic-container">
