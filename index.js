@@ -50,13 +50,12 @@ function updateUsernameDisplay() {
   usernameText.textContent = username || "Guest";
 }
 
-document.getElementById("usernameText").addEventListener("click", () => {
-  const newUsername = prompt("Enter your new username:");
+document.getElementById('usernameText').addEventListener('click', function () {
+  const currentUsername = this.textContent;
+  const newUsername = prompt("Enter your username:", currentUsername);
+
   if (newUsername && newUsername.trim() !== "") {
-    username = newUsername.trim();
-    localStorage.setItem("username", username);
-    updateUsernameDisplay();
-    sendCurrentScore();  // Resend score with new username
+    this.textContent = newUsername.trim();
   }
 });
 
