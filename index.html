@@ -230,6 +230,18 @@ window.addEventListener("beforeunload", () => {
   if (username) submitScore(score);
 });
 
+window.addEventListener('beforeunload', () => {
+  const username = prompt("Enter your username to save your score:");
+  const score = currentScore; // get your current score variable here
+
+  if (!username) return; // skip if no username
+
+  const data = JSON.stringify({ username, score });
+
+  // sendBeacon sends data reliably even when the page is unloading
+  navigator.sendBeacon('https://your-render-url.onrender.com/score', new Blob([data], { type: 'application/json' }));
+});
+
 fetch('https://melondog-server.onrender.com/score', {
   method: 'POST',
   headers: {'Content-Type': 'application/json'},
