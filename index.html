@@ -296,8 +296,28 @@ function sendScore() {
 }
 
 // Send score every 30 seconds while playing
-setInterval(sendScore, 3000);
+setInterval(sendScore, 1000);
 
+function updateLeaderboard() {
+  fetch('https://melondog-server.onrender.com/leaderboard')
+    .then(res => res.json())
+    .then(data => {
+      const leaderboard = document.getElementById('leaderboard');
+      leaderboard.innerHTML = '';
+
+      data.forEach(entry => {
+        const item = document.createElement('div');
+        item.textContent = `${entry.username}: ${entry.score}`;
+        leaderboard.appendChild(item);
+      });
+    });
+}
+
+// Call it once on page load
+updateLeaderboard();
+
+// Then every 10 seconds
+setInterval(updateLeaderboard, 1000); // every 10,000ms (10 seconds)
 // Also send score when user leaves or refreshes page (uses navigator.sendBeacon for reliability)
 window.addEventListener('pagehide', () => {
   if (!username) return;
