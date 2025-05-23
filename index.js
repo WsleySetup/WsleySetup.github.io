@@ -25,35 +25,7 @@ function sendCurrentScore() {
   });
 }
 
-document.getElementById("usernameText").addEventListener("click", async () => {
-  const oldUsername = localStorage.getItem("username");
-  const newUsername = prompt("Enter new username:");
 
-  if (newUsername && newUsername.trim() !== "") {
-    try {
-      const res = await fetch("https://melondog-server.onrender.com/update-username", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ oldUsername, newUsername })
-      });
-
-      const result = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem("username", newUsername);
-        username = newUsername;
-        updateUsernameDisplay();
-        console.log("Username updated successfully");
-      } else {
-        alert(result.error || "Failed to update username");
-      }
-    } catch (err) {
-      console.error("Network error:", err);
-    }
-  }
-});
 function promptUsername() {
   let savedName = localStorage.getItem("username");
   if (savedName) {
