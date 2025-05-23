@@ -4,11 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Melondog</title>
-  <meta property="og:title" content="Melon Dog" />
-<meta property="og:description" content="Scary ahh game" />
-<meta property="og:image" content="https://melon.nl/images/wes.png" />
-<meta property="og:url" content="https://melon.nl/" />
-<meta property="og:type" content="website" />
   <link rel="icon" type="image/x-icon" href="images/wes.png">
   <style>
     body {
@@ -68,19 +63,88 @@
     user-select: none;
     z-index: 1000;
   }
+  #mutemusic, #mutesfx
+  {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: pink;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    user-select: none;
+    z-index: 1000;
+    width: 50px;
+    height: 50px;
+  }
 
   #dogCounter {
     top: 40px; /* put dog counter a bit below fps */
   }
+ 
+  #mutesfx {
+    top: 105px;
+  }
+  #mutetext, #mutetextsfx{
+    position: fixed;
+    top: 40px;
+    font-size: 20px;
+  }
+  #mutetextsfx{
+    top: 135px;
+    right: 18px;
+  }
   </style>
 </head>
-<body>
+<body onclick="startMusic()">
   
   <div id="timer">00:00</div>
   <div id="fpsCounter">FPS: <span id="fps"></span></div>
 <div id="dogCounter">Dogs: <span id="dogCount">1</span></div>
 
+
+<audio id="bg-music" autoplay loop>
+  <source src="sounds/music.mp3" type="audio/mpeg" />
+  Your browser does not support the audio element.
+</audio>
+
+
+<div id="mutemusic"><button id="mutemusic"  onclick="toggleMute()">🔊</button><h2 id="mutetext">music</h2>
+<button id="mutesfx"  onclick="toggleSFXMute()">🔊</button><h2 id="mutetextsfx">SFX</h2>
+</div>
   <script>
+
+    
+
+     function startMusic() {
+    const music = document.getElementById("bg-music");
+    music.play().then(() => {
+      console.log("Music started!");
+    }).catch((e) => {
+      console.warn("Autoplay failed:", e);
+    });
+  }
+
+    const bgMusic = document.getElementById("bg-music");
+  const button = document.querySelector("button");
+
+  function toggleMute() {
+    bgMusic.muted = !bgMusic.muted;
+    button.textContent = bgMusic.muted ? "🔇" : "🔊";
+  }
+  let sfxMuted = false;
+const sfxButton = document.getElementById("mutesfx");
+
+
+function toggleSFXMute() {
+  sfxMuted = !sfxMuted;
+  bounceSound.muted = sfxMuted;
+  cornerSound.muted = sfxMuted;
+  powerupSound.muted = sfxMuted;
+  sfxButton.textContent = sfxMuted ? "🔇" : "🔊";
+}
+
     window.requestAnimFrame = (function() {
       return window.requestAnimationFrame ||
           window.webkitRequestAnimationFrame ||
@@ -90,6 +154,7 @@
               window.setTimeout(callback, 1000 / 60);
           };
     })();
+    
 
     const dogCountEl = document.getElementById('dogCount');
 
