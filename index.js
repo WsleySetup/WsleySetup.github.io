@@ -51,16 +51,12 @@ function updateUsernameDisplay() {
 }
 
 document.getElementById("usernameText").addEventListener("click", () => {
-  let newName = prompt("Enter your username to start:");
-  if (newName && newName.trim() !== "") {
-    username = newName.trim();
+  username = prompt("Enter your username to start:");
+  if (username && username.trim() !== "") {
     localStorage.setItem("username", username);
     updateUsernameDisplay();
-  } else {
-    alert("Username cannot be empty.");
   }
 });
-
 
 function submitScore(score) {
   fetch("https://melondog-server.onrender.com/score", {
