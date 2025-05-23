@@ -629,5 +629,5 @@ powerupScoreEl.innerText = currentScore + 1;
     images.push(createBouncingImage());
     updateDogCount();
 
-    setInterval(spawnPowerUp, 5);
+    setInterval(spawnPowerUp, 5000);
     update();
