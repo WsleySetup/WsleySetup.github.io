@@ -190,6 +190,14 @@
     <button id="mutesfx" onclick="toggleSFXMute()">🔊</button>
     <div class="label">SFX</div>
   </div>
+  <div class="sound-block">
+    <button id="mutesfx" onclick="saveGame()">💾</button>
+    <div class="label">Save</div>
+  </div>
+  <div class="sound-block">
+    <button id="mutesfx" onclick="loadGame()">📂</button>
+    <div class="label">Load</div>
+  </div>
 </div>
 
 
@@ -515,6 +523,90 @@ function toggleSFXMute() {
       // Removed updateDogCount() from here since images array not updated yet
 
       return { el: img, x, y, speedX, speedY, width: imgWidth, height: imgHeight };
+    }
+
+    function loadGame() {
+      const savedState = localStorage.getItem('melondogSave');
+      if (!savedState) {
+        alert("No saved game found!");
+        return;
+      }
+      const gameState = JSON.parse(savedState);
+
+      // Clear existing dogs and powerups
+      images.forEach(dog => dog.el.remove());
+      images.length = 0;
+      powerUps.forEach(p => p.el.remove());
+      powerUps.length = 0;
+
+      // Load dogs
+      gameState.dogs.forEach(dogData => {
+        const dog = createBouncingImage(dogData.x, dogData.y, dogData.speedX, dogData.speedY);
+        dog.width = dogData.width;
+        dog.height = dogData.height;
+        dog.el.style.width = dog.width + 'px';
+        dog.el.style.height = dog.height + 'px';
+        dog.el.style.filter = dogData.filter;
+        images.push(dog);
+      });
+      updateDogCount();
+
+      // Load powerups
+      gameState.powerups.forEach(pData => {
+        const powerupEl = document.createElement('div');
+        powerupEl.classList.add('powerup', pData.name);
+        powerupEl.style.left = pData.x + 'px';
+        powerupEl.style.top = pData.y + 'px';
+        document.body.appendChild(powerupEl);
+        powerUps.push({ el: powerupEl, name: pData.name });
+      });
+
+      // Load timer
+      startTime = Date.now() - gameState.elapsedTime;
+      updateTimer();
+
+      // Load score
+      document.getElementById("powerupCount").innerText = gameState.powerupCount;
+
+      // Load mute states
+      sfxMuted = gameState.sfxMuted;
+      bounceSound.muted = sfxMuted;
+      cornerSound.muted = sfxMuted;
+      powerupSound.muted = sfxMuted;
+      sfxButton.textContent = sfxMuted ? "🔇" : "🔊";
+
+      bgMusic.muted = gameState.bgMusicMuted;
+      button.textContent = bgMusic.muted ? "🔇" : "🔊";
+      if (!bgMusic.muted) {
+        bgMusic.play().catch(e => console.warn("Autoplay failed on load:", e));
+      }
+
+      alert("Game Loaded!");
+    }
+
+    function saveGame() {
+      const gameState = {
+        elapsedTime: Date.now() - startTime,
+        powerupCount: parseInt(document.getElementById("powerupCount").innerText),
+        sfxMuted: sfxMuted,
+        bgMusicMuted: bgMusic.muted,
+        dogs: images.map(dog => ({
+          x: dog.x,
+          y: dog.y,
+          speedX: dog.speedX,
+          speedY: dog.speedY,
+          width: dog.width,
+          height: dog.height,
+          filter: dog.el.style.filter
+        })),
+        powerups: powerUps.map(p => ({
+          name: p.name,
+          x: parseFloat(p.el.style.left),
+          y: parseFloat(p.el.style.top)
+        }))
+      };
+      localStorage.setItem('melondogSave', JSON.stringify(gameState));
+      alert("Game Saved!");
     }
 
     function applyPowerUp(type, image) {
