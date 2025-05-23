@@ -1,5 +1,6 @@
 
 window.onload = function() {
+  
   promptUsername();
   sendCurrentScore();
 };
@@ -24,6 +25,35 @@ function sendCurrentScore() {
   });
 }
 
+document.getElementById("usernameText").addEventListener("click", async () => {
+  const oldUsername = localStorage.getItem("username");
+  const newUsername = prompt("Enter new username:");
+
+  if (newUsername && newUsername.trim() !== "") {
+    try {
+      const res = await fetch("https://melondog-server.onrender.com/update-username", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ oldUsername, newUsername })
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem("username", newUsername);
+        username = newUsername;
+        updateUsernameDisplay();
+        console.log("Username updated successfully");
+      } else {
+        alert(result.error || "Failed to update username");
+      }
+    } catch (err) {
+      console.error("Network error:", err);
+    }
+  }
+});
 function promptUsername() {
   let savedName = localStorage.getItem("username");
   if (savedName) {
@@ -67,6 +97,20 @@ function submitScore(score) {
     if (!res.ok) throw new Error("Failed to save score");
   }).catch(err => {
     console.error("Score submission failed:", err);
+  });
+}
+
+async function updateUsername(userId, oldUsername, newUsername, currentScore) {
+  if (oldUsername && oldUsername !== newUsername) {
+    // Delete old username from leaderboard
+    await db.collection('leaderboard').doc(oldUsername).delete();
+  }
+
+  // Add or update new username entry with current score
+  await db.collection('leaderboard').doc(newUsername).set({
+    userId,
+    score: currentScore,
+    updatedAt: new Date(),
   });
 }
 
