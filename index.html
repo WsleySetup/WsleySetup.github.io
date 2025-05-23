@@ -275,6 +275,40 @@ function submitScore(score) {
   });
 }
 
+function sendScore() {
+  const powerupScoreEl = document.getElementById("powerupCount");
+  const score = parseInt(powerupScoreEl.innerText) || 0;
+
+  if (!username) return; // No username, no score sent
+
+  fetch("https://melondog-server.onrender.com/score", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, score })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Failed to save score");
+    console.log(`Score sent: ${score} for ${username}`);
+  })
+  .catch(err => {
+    console.error("Score submission failed:", err);
+  });
+}
+
+// Send score every 30 seconds while playing
+setInterval(sendScore, 3000);
+
+// Also send score when user leaves or refreshes page (uses navigator.sendBeacon for reliability)
+window.addEventListener('pagehide', () => {
+  if (!username) return;
+
+  const powerupScoreEl = document.getElementById("powerupCount");
+  const score = parseInt(powerupScoreEl.innerText) || 0;
+
+  const data = JSON.stringify({ username, score });
+  navigator.sendBeacon('https://melondog-server.onrender.com/score', new Blob([data], { type: 'application/json' }));
+});
+
 // Example: Call this when the user closes the tab or game ends
 window.addEventListener('beforeunload', () => {
   if (!username) return;
