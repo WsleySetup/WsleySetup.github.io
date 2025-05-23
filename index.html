@@ -160,6 +160,7 @@
   <source src="https://github.com/WsleySetup/WsleySetup.github.io/releases/download/music/music.mp3" type="audio/mpeg">
   Your browser does not support the audio tag.
 </audio>
+<div id="leaderboard" style="position: fixed; top: 100px; right: 10px; color: white; z-index: 1000;"></div>
 
 
 <div id="mutemusic-container">
@@ -199,6 +200,9 @@
   <script>
 
 let username = "";
+window.onload = function() {
+  promptUsername();
+};
 
 function promptUsername() {
   username = prompt("Enter your username to start:");
@@ -211,7 +215,7 @@ function promptUsername() {
 }
 
 function submitScore(score) {
-  fetch("https://your-server.com/score", {
+  fetch("https://melondog-server.onrender.com/score", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -225,38 +229,27 @@ function submitScore(score) {
 }
 
 // Example: Call this when the user closes the tab or game ends
-window.addEventListener("beforeunload", () => {
-  const score = parseInt(document.getElementById("powerupCount").innerText);
-  if (username) submitScore(score);
-});
-
 window.addEventListener('beforeunload', () => {
-  const username = prompt("Enter your username to save your score:");
-  const score = currentScore; // get your current score variable here
+  if (!username) return;
 
-  if (!username) return; // skip if no username
-
+  const score = parseInt(document.getElementById("powerupCount").innerText);
   const data = JSON.stringify({ username, score });
 
-  // sendBeacon sends data reliably even when the page is unloading
-  navigator.sendBeacon('https://your-render-url.onrender.com/score', new Blob([data], { type: 'application/json' }));
+  navigator.sendBeacon('https://melondog-server.onrender.com/score', new Blob([data], { type: 'application/json' }));
 });
 
-fetch('https://melondog-server.onrender.com/score', {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify({username: 'player1', score: 123})
-})
-.then(res => res.json())
-.then(data => console.log('Score submitted:', data))
-.catch(err => console.error('Error:', err));
+
+
 
 // Get leaderboard from server
 fetch('https://melondog-server.onrender.com/leaderboard')
   .then(res => res.json())
   .then(data => {
     console.log('Leaderboard:', data);
-    // You can add code here to display it in your game UI
+    const leaderboardEl = document.getElementById("leaderboard");
+leaderboardEl.innerHTML = '<h3>Top Scores</h3>' + data.map(
+  entry => `<div>${entry.username}: ${entry.score}</div>`
+).join('');
   });
 
     function showPopup() {
