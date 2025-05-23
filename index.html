@@ -195,7 +195,57 @@
 </p>
   <button onclick="hidePopup()">Close</button>
 </div>
+
   <script>
+
+let username = "";
+
+function promptUsername() {
+  username = prompt("Enter your username to start:");
+  if (!username || username.trim() === "") {
+    alert("You need a username to play.");
+    promptUsername();
+  } else {
+    startGame();
+  }
+}
+
+function submitScore(score) {
+  fetch("https://your-server.com/score", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ username, score })
+  }).then(res => {
+    if (!res.ok) throw new Error("Failed to save score");
+  }).catch(err => {
+    console.error("Score submission failed:", err);
+  });
+}
+
+// Example: Call this when the user closes the tab or game ends
+window.addEventListener("beforeunload", () => {
+  const score = parseInt(document.getElementById("powerupCount").innerText);
+  if (username) submitScore(score);
+});
+
+fetch('https://melondog-server.onrender.com/score', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({username: 'player1', score: 123})
+})
+.then(res => res.json())
+.then(data => console.log('Score submitted:', data))
+.catch(err => console.error('Error:', err));
+
+// Get leaderboard from server
+fetch('https://melondog-server.onrender.com/leaderboard')
+  .then(res => res.json())
+  .then(data => {
+    console.log('Leaderboard:', data);
+    // You can add code here to display it in your game UI
+  });
 
     function showPopup() {
     document.getElementById("popup").style.display = "block";
