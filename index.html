@@ -5,179 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Melondog</title>
   <link rel="icon" type="image/x-icon" href="images/wes.png">
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      position: relative;
-      height: 100vh;
-      background: linear-gradient(180deg, #2a7b9b 0%, #57c785 100%);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: white;
-      user-select: none;
-    }
-    .bounceImage {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      user-select: none;
-      left: 0;
-      top: 0;
-      filter: hue-rotate(0deg);
-      transition: filter 0.5s ease;
-    }
-    .powerup {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      user-select: none;
-      pointer-events: none;
-      opacity: 0.9;
-    }
-    .speedup { background: #ff5722; box-shadow: 0 0 10px #ff5722; }
-    .sizechange { background: #2196f3; box-shadow: 0 0 10px #2196f3; }
-    .colorchange { background: #e91e63; box-shadow: 0 0 10px #e91e63; }
-    .duplicate { background: #ffc107; box-shadow: 0 0 10px #ffc107; }
-
-    #timer {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 48px;
-      font-weight: bold;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-      user-select: none;
-      z-index: 1000;
-      color: white;
-    }
-    #fpsCounter, #dogCounter, #usernameDisplay {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    color: white;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-    user-select: none;
-    z-index: 1000;
-  }
-  #dogCounter {
-    top: 40px; /* put dog counter a bit below fps */
-  }
-  #mutemusic-container {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px; /* vertical space between blocks */
-}
-
-.sound-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#mutemusic, #mutesfx {
-  width: 50px;
-  height: 50px;
-  font-size: 18px;
-  font-weight: bold;
-  background-color: pink;
-  color: white;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-  user-select: none;
-  border: none;
-  cursor: pointer;
-}
-
-.label {
-  margin-top: 4px;
-  font-size: 14px;
-  color: white;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-  text-align: center;
-  font-weight: bold;
-}
-#versiontext
-{
-  position: fixed;
-  bottom: 0px;
-  right: 10px;
-  color: black;
-}
- #popup {
-      display: none;
-      position: fixed;
-      top: 30%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      padding: 20px;
-      background-color: gray;
-      color: black;
-      border: 3px solid black;
-      z-index: 999;
-    }
-
-    #popup-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 998;
-    }
-  
- #powerupScore {
-  position: fixed;
-  top: 70px; /* below dogCounter */
-  left: 10px;
-  font-size: 18px;
-  font-weight: bold;
-  color: white;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-  user-select: none;
-  z-index: 1000;
-}
-#usernameDisplay
-{
-  top:100px;
-}
-
-.leaderboard-container {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  background-color: rgba(0, 0, 0, 0.7); /* translucent black */
-  color: white;
-  padding: 10px;
-  border-radius: 8px;
-  font-family: sans-serif;
-  max-width: 200px;
-  z-index: 1000;
-}
-  
-  </style>
+  <link rel="stylesheet" href="index.css" />
 </head>
 <body onclick="startMusic()">
   
   <div id="timer">00:00:00</div>
+
   <div id="fpsCounter">FPS: <span id="fps"></span></div>
+
 <div id="dogCounter">Dogs: <span id="dogCount">1</span></div>
+
 <div id="powerupScore">Score: <span id="powerupCount">0</span></div>
+
 <div id="usernameDisplay">Username: <span id="usernameText" style="cursor:pointer; text-decoration: underline;">(click to change)</span>
 </div>
+
 <audio id="bg-music" controls loop hidden>
   <source src="https://github.com/WsleySetup/WsleySetup.github.io/releases/download/music/music.mp3" type="audio/mpeg">
   Your browser does not support the audio tag.
 </audio>
+
+
 <div id="leaderboard" class="leaderboard-container"></div>
 
 
@@ -186,9 +34,20 @@
     <button id="mutemusic" onclick="toggleMute()">🔊</button>
     <div class="label">music</div>
   </div>
+
   <div class="sound-block">
     <button id="mutesfx" onclick="toggleSFXMute()">🔊</button>
     <div class="label">SFX</div>
+  </div>
+
+  <div class="sound-block">
+    <button id="mutesfx" onclick="saveGame()">💾</button>
+    <div class="label">Save</div>
+  </div>
+
+  <div class="sound-block">
+    <button id="mutesfx" onclick="loadGame()">📂</button>
+    <div class="label">Load</div>
   </div>
 </div>
 
@@ -196,9 +55,17 @@
 <a id="versiontext" href="#" onclick="showPopup()" >Version: 1.9.4</a>
 
 
+
+
+
+
+
 <div id="popup-overlay" onclick="hidePopup()"></div>
 <div id="popup">
   <p>Update Log: 
+    <br>
+    <br>
+    Version 1.9.5: added live leaderboard and daniel(ragemaster) added save and load buttons
     <br>
     <br>
     Version 1.9.4: added a score counter for the amount of powerups picked up.
@@ -215,392 +82,6 @@
   <button onclick="hidePopup()">Close</button>
 </div>
 
-  <script>
-
-window.onload = function() {
-  promptUsername();
-
-  // After starting the game, send current score immediately:
-  sendCurrentScore();
-};
-
-function sendCurrentScore() {
-  if (!username) return; // no username, don't send
-
-  const score = parseInt(document.getElementById("powerupCount").innerText) || 0;
-
-  fetch("https://melondog-server.onrender.com/score", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ username, score })
-  }).then(res => {
-    if (!res.ok) throw new Error("Failed to save score");
-  }).catch(err => {
-    console.error("Score submission failed:", err);
-  });
-}
-
-function promptUsername() {
-  let savedName = localStorage.getItem("username");
-  if (savedName) {
-    username = savedName;
-    updateUsernameDisplay();
-    startGame();
-  } else {
-    username = prompt("Enter your username to start:");
-    if (!username || username.trim() === "") {
-      alert("You need a username to play.");
-      promptUsername();
-    } else {
-      localStorage.setItem("username", username);
-      updateUsernameDisplay();
-      startGame();
-    }
-  }
-}
-
-function updateUsernameDisplay() {
-  const usernameText = document.getElementById("usernameText");
-  usernameText.textContent = username || "Guest";
-}
-
-document.getElementById("usernameText").addEventListener("click", () => {
-  username = prompt("Enter your username to start:");
-  if (username && username.trim() !== "") {
-    localStorage.setItem("username", username);
-    updateUsernameDisplay();
-  }
-});
-
-function submitScore(score) {
-  fetch("https://melondog-server.onrender.com/score", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ username, score })
-  }).then(res => {
-    if (!res.ok) throw new Error("Failed to save score");
-  }).catch(err => {
-    console.error("Score submission failed:", err);
-  });
-}
-
-function sendScore() {
-  const powerupScoreEl = document.getElementById("powerupCount");
-  const score = parseInt(powerupScoreEl.innerText) || 0;
-
-  if (!username) return; // No username, no score sent
-
-  fetch("https://melondog-server.onrender.com/score", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, score })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error("Failed to save score");
-    console.log(`Score sent: ${score} for ${username}`);
-  })
-  .catch(err => {
-    console.error("Score submission failed:", err);
-  });
-}
-
-// Send score every 30 seconds while playing
-setInterval(sendScore, 1000);
-
-function updateLeaderboard() {
-  fetch('https://melondog-server.onrender.com/leaderboard')
-    .then(res => res.json())
-    .then(data => {
-      const leaderboard = document.getElementById('leaderboard');
-      leaderboard.innerHTML = '';
-
-      data.forEach(entry => {
-        const item = document.createElement('div');
-        item.textContent = `${entry.username}: ${entry.score}`;
-        leaderboard.appendChild(item);
-      });
-    });
-}
-
-// Call it once on page load
-updateLeaderboard();
-
-// Then every 10 seconds
-setInterval(updateLeaderboard, 1000); // every 10,000ms (10 seconds)
-// Also send score when user leaves or refreshes page (uses navigator.sendBeacon for reliability)
-window.addEventListener('pagehide', () => {
-  if (!username) return;
-
-  const powerupScoreEl = document.getElementById("powerupCount");
-  const score = parseInt(powerupScoreEl.innerText) || 0;
-
-  const data = JSON.stringify({ username, score });
-  navigator.sendBeacon('https://melondog-server.onrender.com/score', new Blob([data], { type: 'application/json' }));
-});
-
-// Example: Call this when the user closes the tab or game ends
-window.addEventListener('beforeunload', () => {
-  if (!username) return;
-
-  const score = parseInt(document.getElementById("powerupCount").innerText) || 0;
-  const data = JSON.stringify({ username, score });
-
-  navigator.sendBeacon('https://melondog-server.onrender.com/score', new Blob([data], { type: 'application/json' }));
-});
-
-
-
-
-// Get leaderboard from server
-fetch('https://melondog-server.onrender.com/leaderboard')
-  .then(res => res.json())
-  .then(data => {
-    console.log('Leaderboard:', data);
-    const leaderboardEl = document.getElementById("leaderboard");
-leaderboardEl.innerHTML = '<h3>Top Scores</h3>' + data.map(
-  entry => `<div>${entry.username}: ${entry.score}</div>`
-).join('');
-  });
-
-    function showPopup() {
-    document.getElementById("popup").style.display = "block";
-    document.getElementById("popup-overlay").style.display = "block";
-  }
-
-  function hidePopup() {
-    document.getElementById("popup").style.display = "none";
-    document.getElementById("popup-overlay").style.display = "none";
-  }
-
-     function startMusic() {
-    const music = document.getElementById("bg-music");
-    music.play().then(() => {
-      console.log("Music started!");
-    }).catch((e) => {
-      console.warn("Autoplay failed:", e);
-    });
-  }
-
-    const bgMusic = document.getElementById("bg-music");
-  const button = document.querySelector("button");
-
-  function toggleMute() {
-    bgMusic.muted = !bgMusic.muted;
-    button.textContent = bgMusic.muted ? "🔇" : "🔊";
-  }
-  let sfxMuted = false;
-const sfxButton = document.getElementById("mutesfx");
-
-
-function toggleSFXMute() {
-  sfxMuted = !sfxMuted;
-  bounceSound.muted = sfxMuted;
-  cornerSound.muted = sfxMuted;
-  powerupSound.muted = sfxMuted;
-  sfxButton.textContent = sfxMuted ? "🔇" : "🔊";
-}
-
-    window.requestAnimFrame = (function() {
-      return window.requestAnimationFrame ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame ||
-          window.ieRequestAnimationFrame ||
-          function(callback) {
-              window.setTimeout(callback, 1000 / 60);
-          };
-    })();
-    
-
-    const dogCountEl = document.getElementById('dogCount');
-
-    function updateDogCount() {
-      dogCountEl.innerText = images.length;
-    }
-
-    let fpsElement = document.getElementById("fps");
-
-    let then = Date.now() / 1000;  // get time in seconds
-
-    let render = function() {
-      let now = Date.now() / 1000;  // get time in seconds
-      let elapsedTime = now - then;
-      then = now;
-      let fps = 1 / elapsedTime;
-      fpsElement.innerText = fps.toFixed(2);
-      requestAnimFrame(render);
-    };
-    render();
-
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.onkeydown = function(e) {
-      if (
-        e.keyCode === 123 ||
-        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
-        (e.ctrlKey && e.keyCode === 85)
-      ) {
-        return false;
-      }
-    };
-
-    const timerEl = document.getElementById('timer');
-    const imgWidth = 100;
-    const imgHeight = 100;
-
-    const bounceSound = new Audio('sounds/boing.mp3');
-    const cornerSound = new Audio('sounds/corner.mp3');
-    const powerupSound = new Audio('sounds/powerup.mp3');
-    bounceSound.volume = 1;
-    cornerSound.volume = 1;
-    powerupSound.volume = 0.1;
-
-    const powerUps = [];
-    const images = [];
-
-    function createBouncingImage(x = 0, y = 0, speedX = 6, speedY = 4) {
-      const img = document.createElement('img');
-      img.src = 'images/wes.png';
-      img.classList.add('bounceImage');
-      document.body.appendChild(img);
-
-      // Removed updateDogCount() from here since images array not updated yet
-
-      return { el: img, x, y, speedX, speedY, width: imgWidth, height: imgHeight };
-    }
-
-    function applyPowerUp(type, image) {
-      const powerupScoreEl = document.getElementById("powerupCount");
-let currentScore = parseInt(powerupScoreEl.innerText);
-powerupScoreEl.innerText = currentScore + 1;
-      if (type === 'speedup') {
-        image.speedX *= 1.5;
-        image.speedY *= 1.5;
-      } else if (type === 'sizechange') {
-        const scale = Math.random() > 0.5 ? 1.5 : 0.7;
-        image.width = imgWidth * scale;
-        image.height = imgHeight * scale;
-        image.el.style.width = image.width + 'px';
-        image.el.style.height = image.height + 'px';
-      } else if (type === 'colorchange') {
-        const hue = Math.floor(Math.random() * 360);
-        image.el.style.filter = `hue-rotate(${hue}deg)`;
-      } else if (type === 'duplicate') {
-        const clone = createBouncingImage(image.x, image.y, -image.speedX, -image.speedY);
-        images.push(clone);
-        updateDogCount();  // Update count after adding duplicate dog
-      }
-    }
-
-    function spawnPowerUp() {
-      if (powerUps.length >= 999) return;
-
-      const types = ['speedup', 'sizechange', 'colorchange', 'duplicate'];
-      const chosenType = types[Math.floor(Math.random() * types.length)];
-
-      const powerupEl = document.createElement('div');
-      powerupEl.classList.add('powerup', chosenType);
-
-      const padding = 50;
-      const x = Math.random() * (window.innerWidth - padding * 2) + padding;
-      const y = Math.random() * (window.innerHeight - padding * 2) + padding;
-
-      powerupEl.style.left = x + 'px';
-      powerupEl.style.top = y + 'px';
-
-      document.body.appendChild(powerupEl);
-      powerUps.push({ el: powerupEl, name: chosenType });
-    }
-
-    function isColliding(ax, ay, aw, ah, bx, by, bw, bh) {
-      return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
-    }
-
-    let startTime = Date.now();
-    function updateTimer() {
-  const elapsed = Math.floor((Date.now() - startTime) / 1000);
-  const hours = Math.floor(elapsed / 3600);
-  const minutes = Math.floor((elapsed % 3600) / 60);
-  const seconds = elapsed % 60;
-
-  timerEl.textContent =
-    (hours < 10 ? '0' : '') + hours + ':' +
-    (minutes < 10 ? '0' : '') + minutes + ':' +
-    (seconds < 10 ? '0' : '') + seconds;
-}
-
-    function update() {
-      for (let img of images) {
-        img.x += img.speedX;
-        img.y += img.speedY;
-
-        let hitX = false;
-        let hitY = false;
-
-        if (img.x + img.width > window.innerWidth) {
-          img.x = window.innerWidth - img.width;
-          img.speedX = -img.speedX;
-          hitX = true;
-        }
-        if (img.x < 0) {
-          img.x = 0;
-          img.speedX = -img.speedX;
-          hitX = true;
-        }
-        if (img.y + img.height > window.innerHeight) {
-          img.y = window.innerHeight - img.height;
-          img.speedY = -img.speedY;
-          hitY = true;
-        }
-        if (img.y < 0) {
-          img.y = 0;
-          img.speedY = -img.speedY;
-          hitY = true;
-        }
-
-        if (hitX && hitY) {
-          cornerSound.currentTime = 0;
-          cornerSound.play();
-        } else if (hitX || hitY) {
-          bounceSound.currentTime = 0;
-          bounceSound.play();
-        }
-
-        img.el.style.left = img.x + 'px';
-        img.el.style.top = img.y + 'px';
-
-        // Power-up collision
-        for (let i = powerUps.length - 1; i >= 0; i--) {
-          const p = powerUps[i];
-          const rectP = p.el.getBoundingClientRect();
-          const rectI = img.el.getBoundingClientRect();
-
-          if (isColliding(
-            rectI.left, rectI.top, rectI.width, rectI.height,
-            rectP.left, rectP.top, rectP.width, rectP.height
-          )) {
-            applyPowerUp(p.name, img);
-            powerupSound.currentTime = 0;
-            powerupSound.play();
-            document.body.removeChild(p.el);
-            powerUps.splice(i, 1);
-          }
-        }
-      }
-
-      updateTimer();
-      requestAnimationFrame(update);
-    }
-
-    // Initial dog setup:
-    images.push(createBouncingImage());
-    updateDogCount();
-
-    setInterval(spawnPowerUp, 5000);
-    update();
-
-  </script>
+ <script src="index.js"></script>
 </body>
 </html>

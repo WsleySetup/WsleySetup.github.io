@@ -1,0 +1,158 @@
+body {
+      margin: 0;
+      overflow: hidden;
+      position: relative;
+      height: 100vh;
+      background: linear-gradient(180deg, #2a7b9b 0%, #57c785 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      user-select: none;
+    }
+    .bounceImage {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      user-select: none;
+      left: 0;
+      top: 0;
+      filter: hue-rotate(0deg);
+      transition: filter 0.5s ease;
+    }
+    .powerup {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+    .speedup { background: #ff5722; box-shadow: 0 0 10px #ff5722; }
+    .sizechange { background: #2196f3; box-shadow: 0 0 10px #2196f3; }
+    .colorchange { background: #e91e63; box-shadow: 0 0 10px #e91e63; }
+    .duplicate { background: #ffc107; box-shadow: 0 0 10px #ffc107; }
+
+    #timer {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 48px;
+      font-weight: bold;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+      user-select: none;
+      z-index: 1000;
+      color: white;
+    }
+    #fpsCounter, #dogCounter, #usernameDisplay {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    user-select: none;
+    z-index: 1000;
+  }
+  #dogCounter {
+    top: 40px; /* put dog counter a bit below fps */
+  }
+  #mutemusic-container {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px; /* vertical space between blocks */
+}
+
+.sound-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#mutemusic, #mutesfx {
+  width: 50px;
+  height: 50px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: pink;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+  user-select: none;
+  border: none;
+  cursor: pointer;
+}
+
+.label {
+  margin-top: 4px;
+  font-size: 14px;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+  text-align: center;
+  font-weight: bold;
+}
+#versiontext
+{
+  position: fixed;
+  bottom: 0px;
+  right: 10px;
+  color: black;
+}
+ #popup {
+      display: none;
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: gray;
+      color: black;
+      border: 3px solid black;
+      z-index: 999;
+    }
+
+    #popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 998;
+    }
+  
+ #powerupScore {
+  position: fixed;
+  top: 70px; /* below dogCounter */
+  left: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+  user-select: none;
+  z-index: 1000;
+}
+#usernameDisplay
+{
+  top:100px;
+}
+
+.leaderboard-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: rgba(0, 0, 0, 0.7); /* translucent black */
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-family: sans-serif;
+  max-width: 200px;
+  z-index: 1000;
+}
+  
