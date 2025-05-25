@@ -1,120 +1,158 @@
+:root {
+  --bg-gradient: linear-gradient(180deg, #2a7b9b 0%, #57c785 100%);
+  --text-color: white;
+  --button-bg: lightpink;
+  --button-text: white;
+  --button-hover-bg: #5a6371;
+  --popup-bg: #222;
+  --popup-text: #eee;
+  --label-color: white;
+  --version-color: black;
+  --leaderboard-bg: rgba(0, 0, 0, 0.7);
+  --options-bg: #2c2f36;
+  --sound-button-bg: #444b57;
+  --sound-button-hover-bg: #5a6371;
+  --sound-button-text: #eee;
+  --text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+  --popup-shadow: 0 12px 40px rgba(0,0,0,0.7);
+}
+
+.dark-mode {
+  --bg-gradient: linear-gradient(180deg, #121212 10%, green 1000%);
+  --text-color: #f5f5f5;
+  --button-bg: #333;
+  --button-text: #f5f5f5;
+  --button-hover-bg: #555;
+  --popup-bg: #1c1c1c;
+  --popup-text: #ddd;
+  --label-color: #ccc;
+  --version-color: #888;
+  --leaderboard-bg: rgba(20, 20, 20, 0.85);
+  --options-bg: #1a1a1a;
+  --sound-button-bg: #222;
+  --sound-button-hover-bg: #444;
+  --sound-button-text: #ddd;
+  --text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+  --popup-shadow: 0 12px 40px rgba(0,0,0,0.9);
+}
+
+/* Use variables everywhere */
 body {
-      margin: 0;
-      overflow: hidden;
-      position: relative;
-      height: 100vh;
-      background: linear-gradient(180deg, #2a7b9b 0%, #57c785 100%);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: white;
-      user-select: none;
-    }
-    .bounceImage {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      user-select: none;
-      left: 0;
-      top: 0;
-      filter: hue-rotate(0deg);
-      transition: filter 0.5s ease;
-    }
-    .powerup {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      user-select: none;
-      pointer-events: none;
-      opacity: 0.9;
-    }
-    .speedup { background: #ff5722; box-shadow: 0 0 10px #ff5722; }
-    .sizechange { background: #2196f3; box-shadow: 0 0 10px #2196f3; }
-    .colorchange { background: #e91e63; box-shadow: 0 0 10px #e91e63; }
-    .duplicate { background: #ffc107; box-shadow: 0 0 10px #ffc107; }
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+  height: 100vh;
+  background: var(--bg-gradient);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color);
+  user-select: none;
+}
 
-    #powerupScore {
-    position: fixed;
-    top: 70px; /* below dogCounter */
-    left: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    color: white;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-    user-select: none;
-    z-index: 1000;
-    } 
-    #timer {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 48px;
-      font-weight: bold;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-      user-select: none;
-      z-index: 1000;
-      color: white;
-    }
+.bounceImage {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  user-select: none;
+  left: 0;
+  top: 0;
+  filter: hue-rotate(0deg);
+  transition: filter 0.5s ease;
+}
 
-    
-    #fpsCounter, #dogCounter, #usernameDisplay {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    color: white;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-    user-select: none;
-    z-index: 1000;
-  }
-  #dogCounter {
-    top: 40px; /* put dog counter a bit below fps */
-  }
- 
+.powerup {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  user-select: none;
+  pointer-events: none;
+  opacity: 0.9;
+}
 
+.speedup { background: #ff5722; box-shadow: 0 0 10px #ff5722; }
+.sizechange { background: #2196f3; box-shadow: 0 0 10px #2196f3; }
+.colorchange { background: #e91e63; box-shadow: 0 0 10px #e91e63; }
+.duplicate { background: #ffc107; box-shadow: 0 0 10px #ffc107; }
 
+#powerupScore {
+  position: fixed;
+  top: 70px; /* below dogCounter */
+  left: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--text-color);
+  text-shadow: var(--text-shadow);
+  user-select: none;
+  z-index: 1000;
+}
 
+#timer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  user-select: none;
+  z-index: 1000;
+  color: var(--text-color);
+}
 
+#fpsCounter, #dogCounter, #usernameDisplay {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--text-color);
+  text-shadow: var(--text-shadow);
+  user-select: none;
+  z-index: 1000;
+}
 
+#dogCounter {
+  top: 40px; /* put dog counter a bit below fps */
+}
 
 #mutemusic, #mutesfx {
   width: 50px;
   height: 50px;
   font-size: 18px;
   font-weight: bold;
-  background-color: lightpink;
-  color: white;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  text-shadow: var(--text-shadow);
   user-select: none;
   border: none;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
 
-
-
-
-
+#mutemusic:hover, #mutesfx:hover {
+  background-color: var(--button-hover-bg);
+}
 
 .label {
   margin-top: 4px;
   font-size: 14px;
-  color: white;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+  color: var(--label-color);
+  text-shadow: var(--text-shadow);
   text-align: center;
   font-weight: bold;
 }
-#versiontext
-{
+
+#versiontext {
   position: fixed;
   bottom: 0px;
   right: 10px;
-  color: black;
+  color: var(--version-color);
   font-size: 22px;
   font-weight: bold;
   z-index: 9999;
 }
- /* Overlay */
+
+/* Overlay */
 #popup-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -131,14 +169,14 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0.8);
-  background: #222;
-  color: #eee;
+  background: var(--popup-bg);
+  color: var(--popup-text);
   width: 320px;
   max-width: 90vw;
   max-height: 400px;
   padding: 24px 32px;
   border-radius: 16px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+  box-shadow: var(--popup-shadow);
   z-index: 9999;
   opacity: 0;
   visibility: hidden;
@@ -149,7 +187,6 @@ body {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Popup visible state */
 #popup.show,
 #popup-overlay.show {
   opacity: 1;
@@ -160,19 +197,6 @@ body {
   transform: translate(-50%, -50%) scale(1);
 }
 
-/* Scrollbar styling */
-#popup::-webkit-scrollbar {
-  width: 8px;
-}
-#popup::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 4px;
-}
-#popup::-webkit-scrollbar-track {
-  background: #333;
-}
-
-/* Close button styling */
 #popup button {
   margin-top: 20px;
   padding: 10px 24px;
@@ -189,142 +213,231 @@ body {
   background: #388e3c;
 }
 
-  
- 
-#usernameDisplay
-{
-  top:100px;
+#usernameDisplay {
+  top: 100px;
 }
 
 .leaderboard-container {
   position: fixed;
   bottom: 20px;
   left: 20px;
-  background-color: rgba(0, 0, 0, 0.7); /* translucent black */
-  color: white;
+  background-color: var(--leaderboard-bg);
+  color: var(--text-color);
   padding: 10px;
   border-radius: 8px;
   font-family: sans-serif;
   max-width: 200px;
   z-index: 1000;
 }
-  
+
 #optionsToggleBtn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1001;
-    padding: 12px 20px;
-    font-size: 18px;
-    cursor: pointer;
-    background: linear-gradient(135deg, #3271a5, darkblue);
-    border: none;
-    border-radius: 30px;
-    color: white;
-    box-shadow: 0 5px 15px rgba(53, 122, 189, 0.4);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    user-select: none;
-  }
-  #optionsToggleBtn:hover {
-    background: linear-gradient(135deg, #357ABD, #285A8F);
-    box-shadow: 0 8px 20px rgba(40, 90, 143, 0.6);
-  }
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1001;
+  padding: 12px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #3271a5, darkblue);
+  border: none;
+  border-radius: 30px;
+  color: white;
+  box-shadow: 0 5px 15px rgba(53, 122, 189, 0.4);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+}
+#optionsToggleBtn:hover {
+  background: linear-gradient(135deg, #357ABD, #285A8F);
+  box-shadow: 0 8px 20px rgba(40, 90, 143, 0.6);
+}
 
-  /* Options Menu */
-  #optionsMenu {
-    position: fixed;
-    top: 70px;
-    right: 20px;
-    background: #2c2f36;
-    color: #eee;
-    padding: 20px 25px;
-    border-radius: 12px;
-    width: 280px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-    display: none;
-    z-index: 1000;
-  }
+#optionsMenu {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  background: var(--options-bg);
+  color: var(--popup-text);
+  padding: 32px;
+  border-radius: 16px;
+  width: 600px;
+  max-width: 90vw;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+   display: none;
+}
 
-  #optionsMenu h3 {
-    margin-top: 0;
-    font-weight: 700;
-    font-size: 22px;
-    letter-spacing: 0.05em;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #fff;
-  }
+#optionsMenu h3 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: bold;
+  text-align: center;
+  color: var(--popup-text);
+  letter-spacing: 1px;
+}
 
-  /* Sound Block Container */
-  #mutemusic-container {
-    display: flex;
-    justify-content: space-around;
-    gap: 15px;
-  }
+#mutemusic-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-  /* Each sound block */
-  .sound-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+.sound-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #393e46;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.05), 0 4px 10px rgba(0, 0, 0, 0.3);
+}
 
-  .sound-block button {
-    background: #444b57;
-    border: none;
-    color: #eee;
-    font-size: 28px;
-    padding: 10px 16px;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-    transition: background 0.3s ease, transform 0.2s ease;
-  }
-  .sound-block button:hover {
-    background: #5a6371;
-    transform: scale(1.1);
-  }
+.sound-block button {
+  font-size: 20px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--sound-button-bg);
+  color: var(--sound-button-text);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s ease;
+}
 
-  .label {
-    margin-top: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #bbb;
-    user-select: none;
-    text-transform: uppercase;
-    letter-spacing: 0.05
-  }
+.sound-block button:hover {
+  background-color: var(--sound-button-hover-bg);
+}
 
-  #saveLoadButtons {
+.sound-block input[type="range"] {
+  flex-grow: 1;
+  height: 8px;
+  background: #222831;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.sound-block input[type="range"]::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  background: #00adb5;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #00adb5;
+}
+
+.sound-block .label {
+  font-size: 0.9rem;
+  color: #eeeeeecc;
+  text-transform: uppercase;
+  margin-left: 8px;
+}
+
+#saveLoadButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#saveLoadButtons button,
+#saveLoadButtons select {
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: var(--sound-button-bg);
+  color: var(--sound-button-text);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease;
+}
+
+#saveLoadButtons button:hover,
+#saveLoadButtons select:hover {
+  background-color: var(--sound-button-hover-bg);
+}
+
+#saveLoadButtons label.label {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: #eeeeeecc;
+  user-select: none;
+}
+
+
+/* Sound Block Container */
+#mutemusic-container {
   display: flex;
   justify-content: space-around;
-  gap: 10px;
-  margin-top: 20px; /* space from above content */
-  /* remove position, top, left, and z-index */
+  gap: 15px;
+}
+
+/* Each sound block */
+.sound-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sound-block button {
+  background: var(--sound-button-bg);
+  border: none;
+  color: var(--sound-button-text);
+  font-size: 28px;
+  padding: 10px 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.sound-block button:hover {
+  background: var(--sound-button-hover-bg);
+  transform: scale(1.1);
+}
+
+.label {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--label-color);
+  user-select: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#saveLoadButtons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  gap: 10px; /* spacing between buttons */
+  width: 280px; /* or whatever width fits your design */
+  margin-top: 20px;
 }
 
 #saveLoadButtons button {
-  background-color: #444b57;
-  border: none;
-  color: white;
-  font-size: 18px;
   padding: 10px 16px;
+  font-size: 18px;
   border-radius: 6px;
   cursor: pointer;
   box-shadow: 0 3px 10px rgba(0,0,0,0.3);
   transition: background 0.3s ease;
-  flex: 1;
+  background-color: var(--sound-button-bg);
+  color: var(--sound-button-text);
+  border: none;
+  width: 100%; /* make buttons fill the grid cells */
 }
 
 #saveLoadButtons button:hover {
-  background-color: #5a6371;
+  background-color: var(--sound-button-hover-bg);
 }
-#resetbutton
-{
-  background-color: #444b57;
+
+#resetbutton {
+  background-color: var(--sound-button-bg);
   border: none;
-  color: white;
+  color: var(--sound-button-text);
   font-size: 18px;
   padding: 10px 16px;
   border-radius: 6px;
@@ -334,61 +447,220 @@ body {
   flex: 1;
 }
 
-.clickable
-{
+.clickable {
   cursor: pointer;
   text-decoration: underline;
 }
 
- #popup-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 9998;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease;
-  }
-  #popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.8);
-    background: #222;
-    color: #eee;
-    width: 320px;
-    max-width: 90vw;
-    max-height: 400px;
-    padding: 24px 32px;
-    border-radius: 16px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.7);
-    z-index: 9999;
-    opacity: 0;
-    visibility: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 15px;
-    line-height: 1.5;
-    overflow-y: auto;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  #popup.show,
-  #popup-overlay.show {
-    opacity: 1;
-    visibility: visible;
-  }
-  #popup.show {
-    transform: translate(-50%, -50%) scale(1);
-  }
-  #popup button {
-    margin-top: 20px;
-    padding: 10px 24px;
-    background: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 600;
-  }
-  #popup button:hover {
-    background: #388e3c;
-  }
+#musicSelect {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  background: var(--sound-button-bg);
+  color: var(--sound-button-text);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  cursor: pointer;
+  user-select: none;
+}
+#musicSelect:focus {
+  outline: none;
+  background: var(--sound-button-hover-bg);
+}
+
+.hidden
+{
+  visibility: hidden;
+}
+
+#musicSelector {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  background: var(--sound-button-bg);
+  color: var(--sound-button-text);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.3s ease;
+  appearance: none;
+}
+
+#musicSelector:focus {
+  outline: none;
+  background: var(--sound-button-hover-bg);
+}
+
+#musicSelector:hover {
+  background: var(--sound-button-hover-bg);
+}
+.sound-block {
+  background: var(--sound-block-bg, rgba(255, 255, 255, 0.1));
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+#optionsMenu {
+  padding: 24px;
+  background: #222831;
+  color: #eeeeee;
+  border-radius: 12px;
+  margin: 20px auto;
+  max-width: 600px; /* Adjust width for 2 columns */
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(6, auto);
+  gap: 20px 24px;
+  margin-top: 20px;
+  padding: 0 12px;  /* <-- Add horizontal padding */
+}
+
+.sound-block, 
+#saveLoadButtons button, 
+#musicSelector, 
+#darkModeToggle, 
+#resetButton {
+  background: #393e46;
+  padding: 16px 14px;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 5px rgba(255,255,255,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #eeeeee;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  border: none;
+}
+
+.sound-block, 
+#saveLoadButtons button, 
+#musicSelector, 
+#darkModeToggle, 
+#resetButton {
+  max-width: 280px;       /* <-- Limit max width */
+  width: 100%;
+  margin: 0 auto;         /* <-- Center horizontally */
+  box-sizing: border-box;
+}
+
+.sound-block button {
+  background: #00adb5;
+  border-radius: 10px;
+  color: white;
+  padding: 10px;
+  font-weight: 700;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.sound-block button:hover {
+  background: #009ea7;
+}
+
+.sound-block input[type="range"] {
+  width: 100%;
+  cursor: pointer;
+  height: 8px;
+  border-radius: 5px;
+  background: #222831;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.sound-block input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #00adb5;
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #00adb5;
+  transition: background-color 0.3s ease;
+}
+
+.sound-block input[type="range"]::-webkit-slider-thumb:hover {
+  background: #009ea7;
+}
+
+.sound-block input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #00adb5;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 5px #00adb5;
+  transition: background-color 0.3s ease;
+}
+
+.label {
+  font-size: 0.9rem;
+  color: #eeeeeecc;
+  user-select: none;
+  text-align: center;
+  margin-top: 8px;
+}
+
+select {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  width: 100%;
+  background: #222831;
+  color: #eeeeee;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+select:hover {
+  background: #393e46;
+}
+
+#saveLoadButtons {
+  display: flex;
+  gap: 12px;
+  justify-content: center; /* center horizontally */
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+#saveLoadButtons button {
+  flex: 1;              /* make them equal width */
+  padding: 10px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  background-color: var(--sound-button-bg);
+  color: var(--sound-button-text);
+  border: none;
+  transition: background 0.3s ease;
+}
+
+#saveLoadButtons button:hover {
+  background-color: var(--sound-button-hover-bg);
+}
+
+
+#optionsMenu.show {
+  display: grid; /* or 'flex' if you're using flexbox, depends on your layout */
+}
