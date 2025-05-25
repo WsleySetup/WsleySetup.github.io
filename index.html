@@ -19,10 +19,11 @@
 
   <div id="usernameDisplay">Username: <span id="usernameText" class="clickable">(click to change)</span></div>
 
-  <audio id="bg-music" controls loop hidden>
-    <source src="https://github.com/WsleySetup/WsleySetup.github.io/releases/download/music/music.mp3" type="audio/mpeg" />
-    Your browser does not support the audio tag.
-  </audio>
+  <audio id="bg-music" class="hidden" controls autoplay loop>
+  <source id="musicSource" src="https://github.com/WsleySetup/WsleySetup.github.io/releases/download/music/music.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
 
   <div id="leaderboard" class="leaderboard-container"></div>
 
@@ -51,16 +52,24 @@
     <button id="saveButton" onclick="saveGame()">💾 Save</button>
     <button id="loadButton" onclick="loadGame()">📂 Load</button>
     <button id="resetButton">🔄 Reset Game</button>
+    <button id="darkModeToggle">🌙 Toggle Dark Mode</button>
+    <label for="musicSelect" class="label">Background Music:</label>
+<select id="musicSelect">
+  <option value="https://github.com/WsleySetup/WsleySetup.github.io/releases/download/music/music.mp3">Lofi</option>
+  <option value="https://github.com/WsleySetup/WsleySetup.github.io/releases/download/music/Rap1.mp3">Rap</option>
+  <option value="https://github.com/WsleySetup/WsleySetup.github.io/releases/download/music/Edm.mp3">Edm</option>
+  <option value="https://github.com/WsleySetup/WsleySetup.github.io/releases/download/music/Rock.mp3">Rock</option>
+</select>
   </div>
-  
 </div>
 
-  <a href="#" id="versiontext">Version: 1.9.6</a>
+  <a href="#" id="versiontext">Version: 1.9.7</a>
 
 <div id="popup-overlay"></div>
 <div id="popup">
   <p>
     <strong>Update Log:</strong>
+    Version 1.9.7: added dark mode, and added a dropdown to change music in the settings.
     <br /><br />
     Version 1.9.6: made a options menu for all the settings, added sliders to the music and sfx, and added a reset button.
     <br /><br />
