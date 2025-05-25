@@ -26,29 +26,57 @@ function sendCurrentScore() {
 }
 
 
+
+
 function promptUsername() {
   let savedName = localStorage.getItem("username");
   if (savedName) {
     username = savedName;
     updateUsernameDisplay();
     startGame();
+    startSendingScores();
   } else {
     username = prompt("Enter your username to start:");
     if (!username || username.trim() === "") {
       alert("You need a username to play.");
-      promptUsername();
+      promptUsername();  // recursive until valid
     } else {
+      username = username.trim();
       localStorage.setItem("username", username);
       updateUsernameDisplay();
       startGame();
+      startSendingScores();
     }
   }
 }
 
+ 
 function updateUsernameDisplay() {
   const usernameText = document.getElementById("usernameText");
   usernameText.textContent = username || "Guest";
 }
+
+const toggleDarkMode = document.getElementById('darkModeToggle');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const savedMode = localStorage.getItem('darkMode');
+
+if (savedMode === 'enabled' || (savedMode === null && prefersDark)) {
+  document.body.classList.add('dark-mode');
+}
+
+toggleDarkMode.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  if (document.body.classList.contains('dark-mode')) {
+    localStorage.setItem('darkMode', 'enabled');
+  } else {
+    localStorage.setItem('darkMode', 'disabled');
+  }
+});
+
+// Start music on first user interaction
+window.addEventListener('click', () => startBackgroundMusic(), { once: true });
+window.addEventListener('keydown', () => startBackgroundMusic(), { once: true });
+
 
 document.getElementById('usernameText').addEventListener('click', function () {
   const currentUsername = this.textContent;
@@ -197,6 +225,15 @@ window.addEventListener('beforeunload', () => {
   navigator.sendBeacon('https://melondog-server.onrender.com/score', new Blob([data], { type: 'application/json' }));
 });
 
+
+
+window.addEventListener('click', () => {
+  startBackgroundMusic();
+}, { once: true }); // only once on first click
+
+window.addEventListener('keydown', () => {
+  startBackgroundMusic();
+}, { once: true });
  
   let musicOn = true;
   let sfxOn = true;
@@ -296,25 +333,74 @@ leaderboardEl.innerHTML = '<h3>Top Scores</h3>' + data.map(
   function toggleMute() {
   const bgMusic = document.getElementById('bg-music');
   const musicbutton = document.getElementById('mutemusic');
-  if (!bgMusic || !musicbutton) return; // safety check
+  if (!bgMusic || !musicbutton) return; 
 
   bgMusic.muted = !bgMusic.muted;
   musicbutton.textContent = bgMusic.muted ? "🔇" : "🔊";
+
+  // If unmuting, try to play (handle autoplay restrictions)
+  if (!bgMusic.muted) {
+    bgMusic.play().catch(e => {
+      console.log("Play prevented on unmute, user interaction needed:", e);
+    });
+  }
 }
 
 // You can keep this outside for SFX mute toggle if needed
-let sfxMuted = false;
+
+const musicSelect = document.getElementById("musicSelect");
+const musicButton = document.getElementById("mutemusic");
 const sfxButton = document.getElementById("mutesfx");
 
+// Load saved music and mute state or use defaults
+const savedMusic = localStorage.getItem("selectedMusic") || musicSelect.value;
+const savedMuted = localStorage.getItem("musicMuted") === "true";
+
+function setMusic(url) {
+  bgMusic.src = url;
+  bgMusic.play().catch(e => {
+    console.log("Play prevented (user interaction needed):", e);
+  });
+}
+
+// On page load, set the select and audio to saved music
+musicSelect.value = savedMusic;
+bgMusic.muted = savedMuted;
+setMusic(savedMusic);
+musicButton.textContent = bgMusic.muted ? "🔇" : "🔊";
+
+// Change music when user picks a new one
+musicSelect.addEventListener("change", () => {
+  const selectedUrl = musicSelect.value;
+  localStorage.setItem("selectedMusic", selectedUrl);
+  setMusic(selectedUrl);
+});
+musicButton.addEventListener("click", toggleMute);
+musicButton.addEventListener("click", () => {
+  bgMusic.muted = !bgMusic.muted;
+  localStorage.setItem("musicMuted", bgMusic.muted);
+  musicButton.textContent = bgMusic.muted ? "🔇" : "🔊";
+});
+
+// Start music on first user interaction (to bypass autoplay restrictions)
+function startBackgroundMusic() {
+  bgMusic.play().catch(e => {
+    console.log("Autoplay prevented, waiting for user interaction:", e);
+  });
+}
+window.addEventListener("click", startBackgroundMusic, { once: true });
+window.addEventListener("keydown", startBackgroundMusic, { once: true });
+
+let sfxMuted = false;
 
 function toggleSFXMute() {
   sfxMuted = !sfxMuted;
+  // example sound elements (define these in your game)
   bounceSound.muted = sfxMuted;
   cornerSound.muted = sfxMuted;
   powerupSound.muted = sfxMuted;
   sfxButton.textContent = sfxMuted ? "🔇" : "🔊";
 }
-
 
 
 
