@@ -664,7 +664,10 @@ select:hover {
 #optionsMenu.show {
   display: grid; /* or 'flex' if you're using flexbox, depends on your layout */
 }
+<<<<<<< HEAD
 #bgmusic
 {
   display: none;
 }
+=======
+>>>>>>> b4fd2c8673513790ba317298e6497a8fbd3a2e60
