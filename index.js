@@ -79,14 +79,15 @@ window.addEventListener('keydown', () => startBackgroundMusic(), { once: true })
 
 
 document.getElementById('usernameText').addEventListener('click', function () {
-  const currentUsername = this.textContent;
+  const currentUsername = username;
   const newUsername = prompt("Enter your username:", currentUsername);
 
   if (newUsername && newUsername.trim() !== "") {
-    this.textContent = newUsername.trim();
+    username = newUsername.trim();
+    localStorage.setItem('username', username);
+    updateUsernameDisplay(); // refresh the text properly
   }
 });
-
 function submitScore(score) {
   fetch("https://melondog-server.onrender.com/score", {
     method: "POST",
