@@ -1,4 +1,5 @@
 
+
 window.onload = function() {
   
   promptUsername();
@@ -79,15 +80,14 @@ window.addEventListener('keydown', () => startBackgroundMusic(), { once: true })
 
 
 document.getElementById('usernameText').addEventListener('click', function () {
-  const currentUsername = username;
+  const currentUsername = this.textContent;
   const newUsername = prompt("Enter your username:", currentUsername);
 
   if (newUsername && newUsername.trim() !== "") {
-    username = newUsername.trim();
-    localStorage.setItem('username', username);
-    updateUsernameDisplay(); // refresh the text properly
+    this.textContent = newUsername.trim();
   }
 });
+
 function submitScore(score) {
   fetch("https://melondog-server.onrender.com/score", {
     method: "POST",
@@ -257,7 +257,6 @@ window.addEventListener('keydown', () => {
     localStorage.clear();
 
     // Reset username variable
-    username = '';
 
     // Reset UI elements to initial state
     document.getElementById('dogCount').textContent = '1';
@@ -436,16 +435,7 @@ function toggleSFXMute() {
     };
     render();
 
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.onkeydown = function(e) {
-      if (
-        e.keyCode === 123 ||
-        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
-        (e.ctrlKey && e.keyCode === 85)
-      ) {
-        return false;
-      }
-    };
+    
 
     const timerEl = document.getElementById('timer');
     const imgWidth = 100;
@@ -518,6 +508,21 @@ function toggleSFXMute() {
     document.getElementById('mutesfx').textContent = (vol === 0) ? "🔇" : "🔊";
   });
 }
+
+ document.getElementById('suggestion-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const suggestion = document.getElementById('suggestion-input').value;
+
+    const res = await fetch('/send-suggestion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ suggestion })
+    });
+
+    const message = await res.text();
+    document.getElementById('message').innerText = message;
+    document.getElementById('suggestion-input').value = '';
+  });
 
 
     function loadGame() {
