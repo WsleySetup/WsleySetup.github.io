@@ -1,4 +1,5 @@
 
+
 window.onload = function() {
   
   promptUsername();
@@ -49,6 +50,12 @@ function promptUsername() {
     }
   }
 }
+
+const res = await fetch('https://your-backend-domain.com/send-suggestion', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ suggestion }),
+});
 
  
 function updateUsernameDisplay() {
@@ -435,16 +442,7 @@ function toggleSFXMute() {
     };
     render();
 
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.onkeydown = function(e) {
-      if (
-        e.keyCode === 123 ||
-        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
-        (e.ctrlKey && e.keyCode === 85)
-      ) {
-        return false;
-      }
-    };
+    
 
     const timerEl = document.getElementById('timer');
     const imgWidth = 100;
@@ -517,6 +515,15 @@ function toggleSFXMute() {
     document.getElementById('mutesfx').textContent = (vol === 0) ? "🔇" : "🔊";
   });
 }
+
+fetch('/send-suggestion', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ suggestion: 'your suggestion here' }),
+})
+.then(res => res.text())
+.then(console.log)
+.catch(console.error);
 
 
     function loadGame() {
