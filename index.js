@@ -51,7 +51,7 @@ function promptUsername() {
   }
 }
 
-const res = await fetch('https://your-backend-domain.com/send-suggestion', {
+const res = await fetch('https://melondog-server.onrender.com/send-suggestion', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ suggestion }),
@@ -263,6 +263,7 @@ window.addEventListener('keydown', () => {
     localStorage.clear();
 
     // Reset username variable
+    username = '';
 
     // Reset UI elements to initial state
     document.getElementById('dogCount').textContent = '1';
@@ -523,21 +524,6 @@ fetch('/send-suggestion', {
 .then(res => res.text())
 .then(console.log)
 .catch(console.error);
-
- document.getElementById('suggestion-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const suggestion = document.getElementById('suggestion-input').value;
-
-    const res = await fetch('/send-suggestion', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ suggestion })
-    });
-
-    const message = await res.text();
-    document.getElementById('message').innerText = message;
-    document.getElementById('suggestion-input').value = '';
-  });
 
 
     function loadGame() {
