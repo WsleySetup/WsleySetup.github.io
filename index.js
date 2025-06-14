@@ -51,12 +51,6 @@ function promptUsername() {
   }
 }
 
-const res = await fetch('https://melondog-server.onrender.com/send-suggestion', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ suggestion }),
-});
-
  
 function updateUsernameDisplay() {
   const usernameText = document.getElementById("usernameText");
@@ -263,7 +257,6 @@ window.addEventListener('keydown', () => {
     localStorage.clear();
 
     // Reset username variable
-    username = '';
 
     // Reset UI elements to initial state
     document.getElementById('dogCount').textContent = '1';
