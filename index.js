@@ -51,6 +51,7 @@ function promptUsername() {
   }
 }
 
+
  
 function updateUsernameDisplay() {
   const usernameText = document.getElementById("usernameText");
@@ -257,6 +258,7 @@ window.addEventListener('keydown', () => {
     localStorage.clear();
 
     // Reset username variable
+    username = '';
 
     // Reset UI elements to initial state
     document.getElementById('dogCount').textContent = '1';
